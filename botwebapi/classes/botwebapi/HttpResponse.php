@@ -57,6 +57,7 @@ class HttpResponse
         $response->sendStatus();
         $response->sendContentType();
         $response->sendAdditionalResponseFields();
+        header("Access-Control-Allow-Origin: *");
         
         // send content
         if(!empty($response->content))
