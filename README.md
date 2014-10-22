@@ -1,7 +1,7 @@
 Bot Web API
 ===========
 
-Bot web API is a web-based interface for KIPR robot controllers. It allows user to, amongst others, create, edit and run programs, get sensor readings or control motors and servos.
+Bot Web API is a web-based interface for KIPR robot controllers. It allows user to, amongst others, create, edit and run programs, get sensor readings or control motors and servos.
 
 **Note:** This project is currently under development!
 
@@ -42,32 +42,47 @@ Resource                                               | GET           | POST   
 /api/connections/botui                                 | - | establish new connection | - | close all botui connections
 /api/connections/botui/&lt;connection&gt;              | get screenshot | - | send mouse events | close connection
 
-## 1.2 Manual installation (on a Link with firmware 2.0.3 or below)
+## 1.2 Manual installation / installation for developer or contributor
 
-### 1.2.1 Install missing packets
+**Note:** This is the only way to install Bot Web API on a Link with firmware 2.0.3 or below.
+
+### 1.2.1 Create swap file
+Create the swap file
+```Shell
+root@kovan:~# dd if=/dev/zero of=/swapfile bs=1024 count=262144
+root@kovan:~# mkswap /swapfile
+root@kovan:~# swapon /swapfile
+```
+
+Add the following line to `/etc/fstab`
+```
+/swapfile            none                 swap       defaults              0  0
+```
+
+### 1.2.2 Install missing packets
 
 #### Install wget
-```
+```Shell
 root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/wget_1.13.4-r13.1_armv5te.ipk
 ```
 
 #### Install curl
-```
+```Shell
 root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/libcurl5_7.23.1-r0_armv5te.ipk
 root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/curl_7.23.1-r0_armv5te.ipk
 ```
 
 #### Install CA certificates
-```
+```Shell
 root@kovan:~# mkdir -p /etc/ssl/certs
 ```
 
 Add the following to the end of file */etc/profile*
-```
+```Shell
 export SSL_CERT_DIR=/etc/ssl/certs
 ```
 
-```
+```Shell
 root@kovan:~# source /etc/profile
 root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/openssl-misc_1.0.0g-r15.0_armv5te.ipk
 root@kovan:~# cd /etc/ssl/certs
@@ -78,7 +93,7 @@ root@kovan:/etc/ssl/certs# cd ~
 ```
 
 #### Install git
-```
+```Shell
 root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/git_1.7.7-r2_armv5te.ipk
 root@kovan:~# git config --global http.sslcainfo /etc/ssl/certs/cacert.pem
 ```
@@ -104,7 +119,7 @@ root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/a
 root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/php_5.3.6-r0.0_armv5te.ipk
 ```
 
-### 1.2.2 Prepare the development environment
+### 1.2.3 Prepare the development environment
 
 #### Clone the project
 ```Shell
