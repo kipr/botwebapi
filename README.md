@@ -5,66 +5,11 @@ Bot web API is a web-based interface for KIPR robot controllers. It allows user 
 
 **Note:** This project is currently under development!
 
-Installation
-------------
-
-### KIPR Link 2.0.3 (only manual installation possible)
-
-#### Install lighttpd
-
-```Shell
-root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/libpcre0_8.21-r0_armv5te.ipk
-root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-indexfile_1.4.30-r2_armv5te.ipk
-root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-access_1.4.30-r2_armv5te.ipk
-root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-dirlisting_1.4.30-r2_armv5te.ipk
-root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-accesslog_1.4.30-r2_armv5te.ipk
-root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-staticfile_1.4.30-r2_armv5te.ipk
-root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-fastcgi_1.4.30-r2_armv5te.ipk
-root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd_1.4.30-r2_armv5te.ipk
-```
-
-#### Install PHP
-```Shell
-root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/libmysqlclient16_5.1.40-r7_armv5te.ipk
-root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/php-cgi_5.3.6-r0.0_armv5te.ipk
-root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/php_5.3.6-r0.0_armv5te.ipk
-```
-
-#### Enable the lighttpd FastCGI module
-1. Open `/etc/lighttpd.conf`
-2. Add the FastCGI module to the modules to load:
-
-        #                               "mod_setenv",                                  
-                                        "mod_fastcgi",  
-3. Uncomment the configuration for the FastCGI module and adjust the path:
-
-        #### fastcgi module                                                
-        ## read fastcgi.txt for more info                          
-        ## for PHP don't forget to set cgi.fix_pathinfo = 1 in the php.ini
-        fastcgi.server             = ( ".php" =>                                     
-                                       ( "localhost" =>   
-                                         (                
-                                           "socket" => "/tmp/php-fastcgi.socket",
-                                           "bin-path" => "/usr/bin/php-cgi"
-                                         )                             
-                                       )                               
-                                    )
-
-#### Test the server
-1. Create `/www/pages/info.php` with the following content:
-
-        <?php
-        phpinfo();
-        ?>
-2. (Re-)start the web server with `/etc/init.d/lighttpd restart`
-3. You should now be able to open `<IP of KIPR Link>/info.php` with a web browser and see information about your PHP installation.
-
-API
----
+## 1 API
 
 **Note:** [RFC 7231](http://tools.ietf.org/html/rfc7231#section-4.3) describes the HTTP methods.
 
-### Overview
+### 1.1 Overview
 
 **Note:** Not all resources may be available on your platform!
 
@@ -97,7 +42,82 @@ Resource                                               | GET           | POST   
 /api/connections/botui                                 | - | establish new connection | - | close all botui connections
 /api/connections/botui/&lt;connection&gt;              | get screenshot | - | send mouse events | close connection
 
-### 
+## 1.2 Manual installation (on a Link with firmware 2.0.3 or below)
 
+### 1.2.1 Install missing packets
 
+#### Install wget
+```
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/wget_1.13.4-r13.1_armv5te.ipk
+```
 
+#### Install curl
+```
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/libcurl5_7.23.1-r0_armv5te.ipk
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/curl_7.23.1-r0_armv5te.ipk
+```
+
+#### Install CA certificates
+```
+root@kovan:~# mkdir -p /etc/ssl/certs
+```
+
+Add the following to the end of file */etc/profile*
+```
+export SSL_CERT_DIR=/etc/ssl/certs
+```
+
+```
+root@kovan:~# source /etc/profile
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/openssl-misc_1.0.0g-r15.0_armv5te.ipk
+root@kovan:~# cd /etc/ssl/certs
+root@kovan:/etc/ssl/certs# curl http://curl.haxx.se/ca/cacert.pem -o cacert.pem
+root@kovan:/etc/ssl/certs# awk 'split_after==1{n++;split_after=0} /-----END CERTIFICATE-----/ {split_after=1} {print > "cert" n ".pem"}' cacert.pem 
+root@kovan:/etc/ssl/certs# for file in *.pem; do ln -s $file `openssl x509 -hash -noout -in $file`.0; done
+root@kovan:/etc/ssl/certs# cd ~
+```
+
+#### Install git
+```
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/git_1.7.7-r2_armv5te.ipk
+root@kovan:~# git config --global http.sslcainfo /etc/ssl/certs/cacert.pem
+```
+
+#### Install lighttpd
+
+```Shell
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/libpcre0_8.21-r0_armv5te.ipk
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-indexfile_1.4.30-r2_armv5te.ipk
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-access_1.4.30-r2_armv5te.ipk
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-dirlisting_1.4.30-r2_armv5te.ipk
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-accesslog_1.4.30-r2_armv5te.ipk
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-staticfile_1.4.30-r2_armv5te.ipk
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-fastcgi_1.4.30-r2_armv5te.ipk
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd_1.4.30-r2_armv5te.ipk
+```
+
+#### Install PHP
+```Shell
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/libmysqlclient16_5.1.40-r7_armv5te.ipk
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/php-cgi_5.3.6-r0.0_armv5te.ipk
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/php_5.3.6-r0.0_armv5te.ipk
+```
+
+### 1.2.2 Prepare the development environment
+
+#### Clone the project
+```Shell
+root@kovan:~# git clone https://github.com/kipr/botwebapi.git
+```
+
+#### Use our lighttpd configuration file
+```Shell
+root@kovan:~# cd botwebapi/
+root@kovan:~/botwebapi# rm /etc/lighttpd.conf
+root@kovan:~/botwebapi# ln -s ~/botwebapi/lighttpd/lighttpd.conf /etc/
+```
+
+#### Restart lighttpd
+```Shell
+root@kovan:~/botwebapi# /etc/init.d/lighttpd restart
+```
