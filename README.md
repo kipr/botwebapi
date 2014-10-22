@@ -93,6 +93,7 @@ root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/a
 root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-accesslog_1.4.30-r2_armv5te.ipk
 root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-staticfile_1.4.30-r2_armv5te.ipk
 root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-fastcgi_1.4.30-r2_armv5te.ipk
+root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd-module-rewrite_1.4.30-r2_armv5te.ipk
 root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/lighttpd_1.4.30-r2_armv5te.ipk
 ```
 
@@ -115,6 +116,7 @@ root@kovan:~# git clone https://github.com/kipr/botwebapi.git
 root@kovan:~# cd botwebapi/
 root@kovan:~/botwebapi# rm /etc/lighttpd.conf
 root@kovan:~/botwebapi# ln -s ~/botwebapi/lighttpd/lighttpd.conf /etc/
+root@kovan:~/botwebapi# ln -s ~/botwebapi/botwebapi /www/pages/api
 ```
 
 #### Restart lighttpd
