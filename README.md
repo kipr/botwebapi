@@ -67,7 +67,7 @@ The Bot Web API uses JSON as message format.
           "type":"string",
           "required":false
         },
-        "message" : {
+        "details" : {
           "type" : "object",
           "required":false
 } } } } }
@@ -79,7 +79,7 @@ The Bot Web API uses JSON as message format.
   "Error" : {
     "class" : "Server Error",
     "sub_class" : "Internal Server Error",
-    "message" : "Internal error: INCLUDE_PATH does not name a directory!"
+    "details" : "Internal error: INCLUDE_PATH does not name a directory!"
 } }
 ```
 
