@@ -42,11 +42,52 @@ Resource                                               | GET           | POST   
 /api/connections/botui                                 | - | establish new connection | - | close all botui connections
 /api/connections/botui/&lt;connection&gt;              | get screenshot | - | send mouse events | close connection
 
-## 1.2 Manual installation / installation for developer or contributor
+### 1.2 Messages
+
+The Bot Web API uses JSON as message format.
+
+#### Error Message
+
+**JSON schema:**
+```JSON
+{
+  "title" : "Error Message",
+  "type" : "object",
+  "required" : true,
+  "properties" : {
+    "Error" : {
+      "type" : "object",
+      "required" : true,
+      "properties" : {
+        "class" : {
+          "type" : "string",
+          "required" : true
+        },
+        "sub_class": {
+          "type":"string",
+          "required":false
+        },
+        "message" : {
+          "type" : "object",
+          "required":false
+} } } } }
+```
+
+**Example:**
+```JSON
+{
+  "Error" : {
+    "class" : "Server Error",
+    "sub_class" : "Internal Server Error",
+    "message" : "Internal error: INCLUDE_PATH does not name a directory!"
+} }
+```
+
+## 2 Manual installation / installation for developer or contributor
 
 **Note:** This is the only way to install Bot Web API on a Link with firmware 2.0.3 or below.
 
-### 1.2.1 Create swap file
+### 2.1 Create swap file
 Create the swap file
 ```Shell
 root@kovan:~# dd if=/dev/zero of=/swapfile bs=1024 count=262144
@@ -59,7 +100,7 @@ Add the following line to `/etc/fstab`
 /swapfile            none                 swap       defaults              0  0
 ```
 
-### 1.2.2 Install missing packets
+### 2.2 Install missing packets
 
 #### Install wget
 ```Shell
@@ -119,7 +160,7 @@ root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/a
 root@kovan:~# opkg install http://netv.bunnie-bar.com/build/kovan-debug/LATEST/armv5te/php_5.3.6-r0.0_armv5te.ipk
 ```
 
-### 1.2.3 Prepare the development environment
+### 2.3 Prepare the development environment
 
 #### Clone the project
 ```Shell
