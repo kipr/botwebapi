@@ -45,7 +45,7 @@ else
 }
 
 // create the resource manager
-$resource_manager = new resources\ResourceManager();
+$resource_manager = resources\ResourceManager::getInstance();
 try
 {
     $resource = $resource_manager->getResourceByUri($resource_uri);

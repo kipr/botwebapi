@@ -4,6 +4,17 @@ namespace botwebapi\resources;
 
 class ResourceManager
 {
+    public static function getInstance()
+    {
+        static $instance = NULL;
+        if(!$instance)
+        {
+            $instance = new static();
+        }
+        
+        return $instance;
+    }
+    
     private $resources = array();
     
     private function registerResources($uri_prefix, $resource_path)
@@ -45,7 +56,7 @@ class ResourceManager
         }
     }
     
-    public function __construct()
+    protected function __construct()
     {
         $resources_root_path = __DIR__;
         
@@ -62,6 +73,11 @@ class ResourceManager
     public function getResourceByUri($resource_uri)
     {
         return $this->resources[$resource_uri];
+    }
+    
+    public function getResources()
+    {
+        return $this->resources;
     }
 }
 
