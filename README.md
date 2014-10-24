@@ -102,25 +102,28 @@ Returns a list describing all available resources.
 			"type" : "array",
 			"required" : true,
 			"items" : {
-					"type" : "object",
-					"required" : false,
-					"properties" : {
-						"name" : {
-							"type" : "string",
-							"required" : true
-						},
-						"uri" : {
-							"type" : "string",
-							"required" : true
-						},
-						"about" : {
-							"type":"object",
-							"required":false,
-							"properties":{
-								"homepage": {
-									"type":"string",
-									"required":false
-								}
+				"type" : "object",
+				"required" : false,
+				"properties" : {
+					"name" : {
+						"type" : "string",
+						"required" : true
+					},
+					"uri" : {
+						"type" : "string",
+						"required" : true
+					},
+					"about" : {
+						"type":"object",
+						"required":false,
+						"properties":{
+							"version": {
+								"type":"string",
+								"required":false
+							}
+							"homepage": {
+								"type":"string",
+								"required":false
 							}
 						}
 					}
@@ -139,6 +142,7 @@ Returns a list describing all available resources.
       "name": "api",
       "uri": "/api",
       "about": {
+        "version": "1.0",
         "homepage": "https://github.com/kipr/botwebapi"
       }
     },
@@ -146,6 +150,7 @@ Returns a list describing all available resources.
       "name": "projects",
       "uri": "/api/projects",
       "about": {
+        "version": "0.0",
         "homepage": "https://github.com/kipr/botwebapi"
       }
     },
@@ -153,6 +158,7 @@ Returns a list describing all available resources.
       "name": "sessions",
       "uri": "/api/sessions",
       "about": {
+        "version": "0.0",
         "homepage": "https://github.com/kipr/botwebapi"
       }
     }
