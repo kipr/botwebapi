@@ -37,23 +37,29 @@ if(sizeof($matches) != 3 || empty($matches[0]))
 
 if(empty($matches[2]))
 {
-    $resource_urn = $matches[1];
+    $resource_uri = '/'.$matches[1];
 }
 else
 {
-    $resource_urn = $matches[1].'/'.$matches[2];
+    $resource_uri = '/'.$matches[1].'/'.$matches[2];
 }
 
 // create the resource manager
 $resource_manager = new resources\ResourceManager();
 try
 {
-    $resource = $resource_manager->getResourceByName($resource_urn);
+    $resource = $resource_manager->getResourceByUri($resource_uri);
 }
 catch(\Exception $e)
 {
-    JsonHttpResponse::sendClientError(404, array('message' => $resource_urn.' does not name a resource',
+    JsonHttpResponse::sendClientError(404, array('message' => $resource_uri.' does not name a resource',
                                                  'exception' => $e->getMessage()));
+    exit();
+}
+
+if(!$resource)
+{
+    JsonHttpResponse::sendClientError(404, $resource_uri.' does not name a resource');
     exit();
 }
     

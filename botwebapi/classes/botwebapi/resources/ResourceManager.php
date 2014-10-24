@@ -4,27 +4,64 @@ namespace botwebapi\resources;
 
 class ResourceManager
 {
-    private $resources_root_path = NULL;
+    private $resources = array();
+    
+    private function registerResources($uri_prefix, $resource_path)
+    {
+        // a resource has the following name schema: <name>/<Name>.php
+        $resource_name = basename($resource_path);
+        $resource_uri = $uri_prefix.'/'.$resource_name;
+        $resource_class_file_path = $resource_path.DIRECTORY_SEPARATOR.ucfirst($resource_name).'.php';
+        
+        if(is_readable($resource_class_file_path))
+        {
+            
+            // check if we can load it. The class name is <uri_prefix>\<name>\<Name>
+            try
+            {
+                $resource_class_name = __NAMESPACE__.str_replace('/', '\\', $resource_uri).'\\'.ucfirst($resource_name);
+                $resource = new $resource_class_name();
+                
+                // and it needs to implement iBotWebApiResource
+                $resource_rc = new \ReflectionClass($resource);
+                if($resource_rc->implementsInterface('botwebapi\resources\iBotWebApiResource'))
+                {
+                    $this->resources[$resource_uri] = $resource;
+                }
+            }
+            catch(\Exception $e)
+            {
+                // this is no valid resource
+            }
+        }
+        
+        foreach (glob($resource_path.'/*') as $file)
+        {
+            // a resource is always located in a directory
+            if(is_dir($file) && !is_link($file))
+            {
+                $this->registerResources($resource_uri, $file);
+            }
+        }
+    }
     
     public function __construct()
     {
-        $resources_root_path = __DIR__.'/resources';
+        $resources_root_path = __DIR__;
+        
+        foreach (glob($resources_root_path.'/*') as $file)
+        {
+            // a resource is always located in a directory
+            if(is_dir($file) && !is_link($file))
+            {
+                $this->registerResources('', $file);
+            }
+        }
     }
     
-    public function getResourceByName($urn)
+    public function getResourceByUri($resource_uri)
     {
-        $namespace = '\\'.str_replace('/', '\\', $urn);
-        $name = substr(strrchr($namespace, '\\'), 1);
-        
-        $resource_class_name = __NAMESPACE__.$namespace.'\\'.ucfirst($name);
-        
-        $resource_rc = new \ReflectionClass($resource_class_name);
-        if(!$resource_rc->implementsInterface('botwebapi\resources\iBotWebApiResource'))
-        {
-            return NULL;
-        }
-        
-        return new $resource_class_name();
+        return $this->resources[$resource_uri];
     }
 }
 
