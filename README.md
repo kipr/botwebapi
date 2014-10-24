@@ -70,7 +70,11 @@ The Bot Web API uses JSON as message format.
         "details" : {
           "type" : "object",
           "required":false
-} } } } }
+        }
+      }
+    }
+  }
+}
 ```
 
 **Example:**
@@ -80,8 +84,82 @@ The Bot Web API uses JSON as message format.
     "class" : "Server Error",
     "sub_class" : "Internal Server Error",
     "details" : "Internal error: INCLUDE_PATH does not name a directory!"
-} }
+  }
+}
 ```
+
+#### /api
+#### GET
+Returns a list describing all available resources.
+
+**JSON schema:**
+```JSON
+{
+	"type" : "object",
+	"required" : true,
+	"properties" : {
+		"resources" : {
+			"type" : "array",
+			"required" : true,
+			"items" : {
+					"type" : "object",
+					"required" : false,
+					"properties" : {
+						"name" : {
+							"type" : "string",
+							"required" : true
+						},
+						"uri" : {
+							"type" : "string",
+							"required" : true
+						},
+						"about" : {
+							"type":"object",
+							"required":false,
+							"properties":{
+								"homepage": {
+									"type":"string",
+									"required":false
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+```
+
+**Example:**
+```JSON
+{
+  "resources": [
+    {
+      "name": "api",
+      "uri": "/api",
+      "about": {
+        "homepage": "https://github.com/kipr/botwebapi"
+      }
+    },
+    {
+      "name": "projects",
+      "uri": "/api/projects",
+      "about": {
+        "homepage": "https://github.com/kipr/botwebapi"
+      }
+    },
+    {
+      "name": "sessions",
+      "uri": "/api/sessions",
+      "about": {
+        "homepage": "https://github.com/kipr/botwebapi"
+      }
+    }
+  ]
+}
+```
+
 
 ## 2 Manual installation / installation for developer or contributor
 
