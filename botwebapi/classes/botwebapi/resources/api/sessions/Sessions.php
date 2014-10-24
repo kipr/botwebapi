@@ -5,7 +5,17 @@ use botwebapi\resources as resources;
 
 class Sessions implements resources\iBotWebApiResource
 {
-    function handleRequest()
+    public function getName()
+    {
+        return 'sessions';
+    }
+    
+    public function getHomepage()
+    {
+        return 'https://github.com/kipr/botwebapi';
+    }
+    
+    public function handleRequest()
     {
         echo 'handle /api/session request';
     }
