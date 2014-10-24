@@ -120,7 +120,7 @@ Returns a list describing all available resources.
 							"version": {
 								"type":"string",
 								"required":false
-							}
+							},
 							"homepage": {
 								"type":"string",
 								"required":false
