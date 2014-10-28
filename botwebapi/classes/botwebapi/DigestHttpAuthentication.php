@@ -15,9 +15,7 @@ class DigestHttpAuthentication
                                              'Authentication required',
                                              array('WWW-Authenticate' => 'Digest realm="'.BOT_WEB_API_REALM.
                                                                          '",qop="auth",nonce="'.uniqid().
-                                                                         '",opaque="'.md5(BOT_WEB_API_REALM).'"'),
-                                             HttpResponse::CONTENT_TYPE_APPLICATION_JSON,
-                                             HttpResponse::CHARACTER_SET_UTF_8);
+                                                                         '",opaque="'.md5(BOT_WEB_API_REALM).'"'));
             HttpResponse::sendHttpResponseAndExit($response);
         }
         
@@ -44,15 +42,13 @@ class DigestHttpAuthentication
             if($data['response'] != $valid_response)
             {
                 $response = new JsonHttpResponse(401,
-                                                 $valid_response.' - '.$password.' - '.$data['response'],
+                                                 'Authentication required',
                                                  array('WWW-Authenticate' => 'Digest realm="'.BOT_WEB_API_REALM.
                                                                              '",qop="auth",nonce="'.uniqid().
-                                                                             '",opaque="'.md5(BOT_WEB_API_REALM).'"'),
-                                                 HttpResponse::CONTENT_TYPE_APPLICATION_JSON,
-                                                 HttpResponse::CHARACTER_SET_UTF_8);
+                                                                             '",opaque="'.md5(BOT_WEB_API_REALM).'"'));
                 HttpResponse::sendHttpResponseAndExit($response);
             }
-        }
+        } 
     } 
 }
 
