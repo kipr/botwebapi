@@ -18,53 +18,66 @@ class ResourceDescriptor
     }
 }
 
-class Api implements resources\iBotWebApiResource
+class Api extends resources\BotWebApiResource
 {
-    public function getName()
+    public function __construct($uri)
     {
-        return 'api';
+        parent::__construct('api', $uri, '1.0', 'https://github.com/kipr/botwebapi');
     }
     
-    public function getVersion()
+    protected function handleGetRequest()
     {
-        return '1.0';
-    }
-    
-    public function getHomepage()
-    {
-        return 'https://github.com/kipr/botwebapi';
-    }
-    
-    public function handleRequest()
-    {
-        switch($_SERVER['REQUEST_METHOD'])
-        {
-        case 'GET':
-        case 'HEAD':
-            // returns a list of top-level resources
-            return $this->handleGetRequest();
-        default:
-            return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
-        }
-    }
-    
-    private function handleGetRequest()
-    {
-        // returns a list of top-level resources
-        $resource_manager = resources\ResourceManager::getInstance();
-        $resources = $resource_manager->getResources();
-        
+        // returns a list of all child resources
         $resource_descriptors = array();
-        foreach($resources as $uri => $resource)
+        
+        foreach (glob(__DIR__.'/*') as $file)
         {
-            $resource_descriptor = new ResourceDescriptor($resource->getName(),
-                                                          $uri,
-                                                          array('version' => $resource->getVersion(),
-                                                                'homepage' => $resource->getHomepage()));
-            array_push($resource_descriptors, $resource_descriptor);
+            // a resource is always located in a directory
+            if(is_dir($file) && !is_link($file))
+            {
+                // create the resource
+                $resource_name = basename($file);
+                $resource = $this->getChild($resource_name);
+                
+                // create the resource descriptor
+                $resource_descriptor = new ResourceDescriptor($resource->getName(),
+                                                              $resource->getUri(),
+                                                              array('version' => $resource->getVersion(),
+                                                                    'homepage' => $resource->getHomepage()));
+                array_push($resource_descriptors, $resource_descriptor);
+            }
         }
         
         return new botwebapi\JsonHttpResponse(200, array('resources' => $resource_descriptors));
+    }
+    
+    protected function handlePostRequest()
+    {
+        return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
+    }
+    
+    protected function handlePutRequest()
+    {
+        return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
+    }
+    
+    protected function handleDeleteRequest()
+    {
+        return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
+    }
+    
+    protected function getChild($name)
+    {
+        try
+        {
+            // Load the resource. The class name is <this namespace>\<name>\<Name>
+            $resource_class_name = __NAMESPACE__.'\\'.$name.'\\'.ucfirst($name);
+            return new $resource_class_name($this->getUri().'/'.$name);
+        }
+        catch(\Exception $e)
+        {
+            return NULL;
+        }
     }
 }
 

@@ -27,40 +27,9 @@ require INCLUDE_PATH.DIRECTORY_SEPARATOR.'autoload.php';
 // Authenticate the user
 DigestHttpAuthentication::authenticate();
 
-// figure out if this request is valid and who has to handle it
-preg_match('@^/([^/\?]+)/?([^/\?]*).*$@', $_SERVER['REQUEST_URI'], $matches);
-if(sizeof($matches) != 3 || empty($matches[0]))
-{
-    sendHttpResponseAndExit(500, 'Unexpected URI "'.$matches.'"');
-}
-
-if(empty($matches[2]))
-{
-    $resource_uri = '/'.$matches[1];
-}
-else
-{
-    $resource_uri = '/'.$matches[1].'/'.$matches[2];
-}
-
-// create the resource manager
-$resource_manager = resources\ResourceManager::getInstance();
-try
-{
-    $resource = $resource_manager->getResourceByUri($resource_uri);
-}
-catch(\Exception $e)
-{
-    sendHttpResponseAndExit(404, array('message' => $resource_uri.' does not name a resource',
-                                       'exception' => $e->getMessage()));
-}
-
-if(!$resource)
-{
-    sendHttpResponseAndExit(404, $resource_uri.' does not name a resource');
-}
-    
-$response = $resource->handleRequest();
+// Create a new api root resource and let it handle the request
+$resource = new resources\api\Api('/api');
+$response = $resource->handleRequest($_SERVER['REQUEST_URI']);
 if(!$response)
 {
     sendHttpResponseAndExit(500, 'No response from resource "'.$resource->getName().'"');
