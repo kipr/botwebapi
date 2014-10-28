@@ -4,16 +4,35 @@ namespace botwebapi;
 
 class HttpResponse
 {
-    const CONTENT_TYPE_TEXT_PLAIN = 0;
-    const CONTENT_TYPE_TEXT_HTML = 1;
-    const CONTENT_TYPE_APPLICATION_JSON = 2;
+    const CONTENT_TYPE_TEXT_PLAIN = 'text/plain';
+    const CONTENT_TYPE_TEXT_HTML = 'text/html';
+    const CONTENT_TYPE_APPLICATION_JSON = 'application/json';
+    
+    const CHARACTER_SET_UTF_8 = 'UTF-8';
     
     private $status_code = 204;
     private $content_type = CONTENT_TYPE_TEXT_PLAIN;
+    private $character_set = CHARACTER_SET_UTF_8;
     private $content = "";
+    private $additional_response_fields = array();
     
-    public function setContent($content_type, $content)
+    public function __construct($status_code,
+                                $content,
+                                $additional_response_fields = array(),
+                                $content_type = HttpResponse::CONTENT_TYPE_TEXT_PLAIN,
+                                $character_set = HttpResponse::CHARACTER_SET_UTF_8)
     {
+        $this->status_code = $status_code;
+        
+        switch($character_set)
+        {
+        case HttpResponse::CHARACTER_SET_UTF_8:
+            $this->character_set = $character_set;
+            break;
+        default:
+            throw new \Exception('Invalid argument: $character_set');
+        }
+        
         switch($content_type)
         {
         case HttpResponse::CONTENT_TYPE_TEXT_PLAIN:
@@ -28,113 +47,63 @@ class HttpResponse
         default:
             throw new \Exception('Invalid argument: $content_type');
         }
+        
+        $this->additional_response_fields = $additional_response_fields;
     }
     
-    public function setHttpStatusCode($status_code)
+    public static function sendHttpResponseAndExit(HttpResponse $response)
     {
-        $this->status_code = $status_code;
+        // send header
+        $response->sendStatus();
+        $response->sendContentType();
+        $response->sendAdditionalResponseFields();
+        
+        // send content
+        if(!empty($response->content))
+        {
+            echo $response->content;
+        }
+        
+        // nothing to do after we sent the response
+        exit();
     }
     
-    public static function sendHttpResponse(HttpResponse $response)
-    {
-        HttpResponse::sendHttpHeader($response);
-        echo $response->content;
-    }
-    
-    private static function sendHttpHeader(HttpResponse $response)
-    {
-        header(HttpResponse::contentTypeToString($response->content_type));
-        HttpResponse::sendHttpStatusCode($response->status_code);
-    }
-    
-    private static function sendHttpStatusCode($status_code)
+    private function sendStatus()
     {
         $sapi_type= substr(php_sapi_name(), 0, 3);
         
         if($sapi_type == 'cgi' || $sapi_type == 'fpm')
         {
-            header('Status: '.$status_code.' '.HttpResponse::httpStatusCodeToString($status_code));
+            header('Status: '.$this->status_code.' '.HttpStatus::httpStatusCodeToString($this->status_code));
         }
         else
         {
             $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0';
-            header($protocol.' '.$status_code.' '.HttpResponse::httpStatusCodeToString($status_code));
+            header($protocol.' '.$this->status_code.' '.HttpStatus::httpStatusCodeToString($this->status_code));
         }
     }
     
-    public static function contentTypeToString($content_type)
+    public function sendContentType()
     {
-        switch($content_type)
+        if(!empty($this->character_set))
         {
-        case HttpResponse::CONTENT_TYPE_TEXT_PLAIN:
-            return 'Content-Type: text/plain';
-        case HttpResponse::CONTENT_TYPE_TEXT_HTML:
-            return 'Content-Type: text/html';
-        case HttpResponse::CONTENT_TYPE_APPLICATION_JSON:
-            return 'Content-Type: application/json';
-        default:
-            throw new \Exception('Invalid argument: $content_type');
+            header('Content-Type: '.$this->content_type);
+        }
+        else
+        {
+            header('Content-Type: '.$this->content_type.'; charset='.$this->character_set);
         }
     }
     
-    public static function httpStatusCodeToString($status_code)
+    private function sendAdditionalResponseFields()
     {
-        static $status_code_to_string_mappings = array(
-            // from https://tools.ietf.org/html/rfc7231#section-6
-            
-            // 1xx (Informational):
-            100 => 'Continue',
-            101 => 'Switching Protocols',
-
-            // 2xx (Successful):
-            200 => 'OK',
-            201 => 'Created',
-            202 => 'Accepted',
-            203 => 'Non-Authoritative Information',
-            204 => 'No Content',
-            205 => 'Reset Content',
-            206 => 'Partial Content',
-
-            // 3xx (Redirection):
-            300 => 'Multiple Choices',
-            301 => 'Moved Permanently',
-            302 => 'Found',
-            303 => 'See Other',
-            304 => 'Not Modified',
-            305 => 'Use Proxy',
-            307 => 'Temporary Redirect',
-
-            // 4xx (Client Error):
-            400 => 'Bad Request',
-            401 => 'Unauthorized',
-            402 => 'Payment Required',
-            403 => 'Forbidden',
-            404 => 'Not Found',
-            405 => 'Method Not Allowed',
-            406 => 'Not Acceptable',
-            407 => 'Proxy Authentication Required',
-            408 => 'Request Timeout',
-            409 => 'Conflict',
-            410 => 'Gone',
-            411 => 'Length Required',
-            412 => 'Precondition Failed',
-            413 => 'Payload Too Large',
-            414 => 'URI Too Long',
-            415 => 'Unsupported Media Type',
-            416 => 'Range Not Satisfiable',
-            417 => 'Expectation Failed',
-            426 => 'Upgrade Required',
-
-            // 5xx (Server Error):
-            500 => 'Internal Server Error',
-            501 => 'Not Implemented',
-            502 => 'Bad Gateway',
-            503 => 'Service Unavailable',
-            504 => 'Gateway Timeout',
-            505 => 'HTTP Version Not Supported');
-
-        $status_str = $status_code_to_string_mappings[$status_code];
-        return ($status_str) ? $status_str : "Unknown";
+        if(is_array($this->additional_response_fields))
+        {
+            foreach($this->additional_response_fields as $field_name => $value)
+            {
+                header($field_name.': '.$value);
+            }
+        }
     }
 }
 

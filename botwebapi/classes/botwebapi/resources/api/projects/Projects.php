@@ -10,6 +10,11 @@ class Projects implements resources\iBotWebApiResource
         return 'projects';
     }
     
+    public function getVersion()
+    {
+        return '0.0';
+    }
+    
     public function getHomepage()
     {
         return 'https://github.com/kipr/botwebapi';

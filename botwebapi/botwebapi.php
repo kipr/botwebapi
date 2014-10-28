@@ -4,35 +4,34 @@ namespace botwebapi;
 
 // Set constants
 define('API_ROOT_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
-if(!is_dir(API_ROOT_PATH))
-{
-    JsonHttpResponse::sendServerError(500, 'Internal error: $_SERVER["SCRIPT_FILENAME"]) is invalid! ('.$_SERVER['SCRIPT_FILENAME'].')');
-    exit();
-}
-
 define('INCLUDE_PATH', API_ROOT_PATH.DIRECTORY_SEPARATOR.'includes');
-if(!is_dir(INCLUDE_PATH))
+define('CLASS_PATH', API_ROOT_PATH.DIRECTORY_SEPARATOR.'classes');
+
+// Create and send response helpers
+function sendHttpResponseAndExit($status_code, $content)
 {
-    JsonHttpResponse::sendServerError(500, 'Internal error: INCLUDE_PATH does not name a directory! ('.INCLUDE_PATH.')');
-    exit();
+    $response = new JsonHttpResponse($status_code, $content);
+    HttpResponse::sendHttpResponseAndExit($response);
 }
 
-define('CLASS_PATH', API_ROOT_PATH.DIRECTORY_SEPARATOR.'classes');
-if(!is_dir(CLASS_PATH))
+// Caught all uncaught exceptions
+function exception_handler($e)
 {
-    JsonHttpResponse::sendServerError(500, 'Internal error: CLASS_PATH does not name a directory! ('.CLASS_PATH.')');
-    exit();
+    sendHttpResponseAndExit(500, array('message' => 'Uncaught exception', 'exception' => $e->getMessage()));
 }
+set_exception_handler('botwebapi\exception_handler');
 
 // include files
 require INCLUDE_PATH.DIRECTORY_SEPARATOR.'autoload.php';
+
+// Authenticate the user
+DigestHttpAuthentication::authenticate();
 
 // figure out if this request is valid and who has to handle it
 preg_match('@^/([^/\?]+)/?([^/\?]*).*$@', $_SERVER['REQUEST_URI'], $matches);
 if(sizeof($matches) != 3 || empty($matches[0]))
 {
-    JsonHttpResponse::sendServerError(500, array('Internal error: Unexpected URI' => $matches));
-    exit();
+    sendHttpResponseAndExit(500, 'Unexpected URI "'.$matches.'"');
 }
 
 if(empty($matches[2]))
@@ -52,17 +51,21 @@ try
 }
 catch(\Exception $e)
 {
-    JsonHttpResponse::sendClientError(404, array('message' => $resource_uri.' does not name a resource',
-                                                 'exception' => $e->getMessage()));
-    exit();
+    sendHttpResponseAndExit(404, array('message' => $resource_uri.' does not name a resource',
+                                       'exception' => $e->getMessage()));
 }
 
 if(!$resource)
 {
-    JsonHttpResponse::sendClientError(404, $resource_uri.' does not name a resource');
-    exit();
+    sendHttpResponseAndExit(404, $resource_uri.' does not name a resource');
 }
     
-$resource->handleRequest();
+$response = $resource->handleRequest();
+if(!$response)
+{
+    sendHttpResponseAndExit(500, 'No response from resource "'.$resource->getName().'"');
+}
+
+HttpResponse::sendHttpResponseAndExit($response);
 
 ?>

@@ -26,23 +26,15 @@ class ResourceManager
         
         if(is_readable($resource_class_file_path))
         {
-            
             // check if we can load it. The class name is <uri_prefix>\<name>\<Name>
-            try
+            $resource_class_name = __NAMESPACE__.str_replace('/', '\\', $resource_uri).'\\'.ucfirst($resource_name);
+            $resource = new $resource_class_name();
+            
+            // and it needs to implement iBotWebApiResource
+            $resource_rc = new \ReflectionClass($resource);
+            if($resource_rc->implementsInterface('botwebapi\resources\iBotWebApiResource'))
             {
-                $resource_class_name = __NAMESPACE__.str_replace('/', '\\', $resource_uri).'\\'.ucfirst($resource_name);
-                $resource = new $resource_class_name();
-                
-                // and it needs to implement iBotWebApiResource
-                $resource_rc = new \ReflectionClass($resource);
-                if($resource_rc->implementsInterface('botwebapi\resources\iBotWebApiResource'))
-                {
-                    $this->resources[$resource_uri] = $resource;
-                }
-            }
-            catch(\Exception $e)
-            {
-                // this is no valid resource
+                $this->resources[$resource_uri] = $resource;
             }
         }
         

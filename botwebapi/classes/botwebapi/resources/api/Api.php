@@ -25,6 +25,11 @@ class Api implements resources\iBotWebApiResource
         return 'api';
     }
     
+    public function getVersion()
+    {
+        return '1.0';
+    }
+    
     public function getHomepage()
     {
         return 'https://github.com/kipr/botwebapi';
@@ -36,16 +41,16 @@ class Api implements resources\iBotWebApiResource
         {
         case 'GET':
         case 'HEAD':
-            $this->handleGetRequest();
-            break;
+            // returns a list of top-level resources
+            return $this->handleGetRequest();
         default:
-            botwebapi\JsonHttpResponse::sendClientError(405, $_SERVER['REQUEST_METHOD'].' is not supported');
-            return;
+            return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
         }
     }
     
     private function handleGetRequest()
     {
+        // returns a list of top-level resources
         $resource_manager = resources\ResourceManager::getInstance();
         $resources = $resource_manager->getResources();
         
@@ -54,11 +59,12 @@ class Api implements resources\iBotWebApiResource
         {
             $resource_descriptor = new ResourceDescriptor($resource->getName(),
                                                           $uri,
-                                                          array('homepage' => $resource->getHomepage()));
+                                                          array('version' => $resource->getVersion(),
+                                                                'homepage' => $resource->getHomepage()));
             array_push($resource_descriptors, $resource_descriptor);
         }
         
-        botwebapi\JsonHttpResponse::sendResponse(array('resources' => $resource_descriptors));
+        return new botwebapi\JsonHttpResponse(200, array('resources' => $resource_descriptors));
     }
 }
 
