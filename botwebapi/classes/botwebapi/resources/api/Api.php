@@ -4,20 +4,6 @@ namespace botwebapi\resources\api;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
-class ResourceDescriptor
-{
-    public $name;
-    public $uri;
-    public $about;
-    
-    public function __construct($name, $uri, $about)
-    {
-        $this->name = $name;
-        $this->uri = $uri;
-        $this->about = $about;
-    }
-}
-
 class Api extends resources\BotWebApiResource
 {
     public function __construct($uri)
@@ -27,28 +13,21 @@ class Api extends resources\BotWebApiResource
     
     protected function handleGetRequest()
     {
-        // returns a list of all child resources
-        $resource_descriptors = array();
+        $links = new botwebapi\LinksObject();
+        $links->addLink($this->getUri(), 'self');
         
         foreach (glob(__DIR__.'/*') as $file)
         {
-            // a resource is always located in a directory
+            // the children of api are always located in a directory
             if(is_dir($file) && !is_link($file))
             {
-                // create the resource
-                $resource_name = basename($file);
-                $resource = $this->getChild($resource_name);
-                
-                // create the resource descriptor
-                $resource_descriptor = new ResourceDescriptor($resource->getName(),
-                                                              $resource->getUri(),
-                                                              array('version' => $resource->getVersion(),
-                                                                    'homepage' => $resource->getHomepage()));
-                array_push($resource_descriptors, $resource_descriptor);
+                $child_resource_name = basename($file);
+                $links->addLink($this->getUri().'/'.$child_resource_name, 'child-resources', false);
             }
         }
         
-        return new botwebapi\JsonHttpResponse(200, array('resources' => $resource_descriptors));
+        return new botwebapi\JsonHttpResponse(200, array('about' => new botwebapi\AboutObject($this),
+                                                         'links' => $links));
     }
     
     protected function handlePostRequest()

@@ -31,28 +31,21 @@ class Projects extends resources\BotWebApiResource
     
     protected function handleGetRequest()
     {
-        // returns a list of all child resources
-        $project_descriptors = array();
+        $links = new botwebapi\LinksObject();
+        $links->addLink($this->getUri(), 'self');
+        
         foreach (glob(Projects::PROJECTS_ROOT_DIR.'/*') as $file)
         {
             // Link projects are compressed and stored in a single archive
             if(!is_dir($file))
             {
-                // create the resource
-                $resource_name = basename($file);
-                $resource = $this->getChild($resource_name);
-                
-                // create the resource descriptor
-                $project_descriptor = new ProjectDescriptor($resource->getName(),
-                                                            $resource->getUri(),
-                                                            $resource->getLocation(),
-                                                            array('version' => $resource->getVersion(),
-                                                                  'homepage' => $resource->getHomepage()));
-                array_push($project_descriptors, $project_descriptor);
+                $project_name = basename($file);
+                $links->addLink($this->getUri().'/'.$project_name, 'projects', false);
             }
         }
         
-        return new botwebapi\JsonHttpResponse(200, array('projects' => $project_descriptors));
+        return new botwebapi\JsonHttpResponse(200, array('about' => new botwebapi\AboutObject($this),
+                                                         'links' => $links));
     }
     
     protected function handlePostRequest()
