@@ -19,6 +19,7 @@ class Project extends resources\BotWebApiResource
         
         $this->project_name = $project_name;
         $this->archive_location = ARCHIVES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name;
+        $this->binary_location = BINARIES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name;
         
         parent::__construct($resource_name, $resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
     }

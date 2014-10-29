@@ -51,7 +51,7 @@ class Binaries extends resources\BotWebApiResource
         $links = new botwebapi\LinksObject();
         $links->addLink($this->getResourceUri());
         $links->addLink($this->project_resource->getResourceUri(), array('rel' => 'project'));
-        $links->addLink(array('scheme' => 'sftp', 'path' => $this->binary_location),
+        $links->addLink(array('scheme' => 'sftp', 'path' => $this->project_resource->getBinaryLocation()),
                         array('rel' => 'binary_output_folder', 'additional' => array('type' => 'directory')));
         
         foreach (glob($this->project_resource->getBinaryLocation().'/*') as $file)
