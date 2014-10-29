@@ -4,15 +4,15 @@ namespace botwebapi;
 
 class AboutObject
 {
-    public $name = '';
-    public $version = '';
-    public $homepage = '';
+    public $resource_name = '';
+    public $resource_version = '';
+    public $resource_homepage = '';
     
     public function __construct($resource)
     {
-        $this->name = $resource->getName();
-        $this->version = $resource->getVersion();
-        $this->homepage = $resource->getHomepage();
+        $this->resource_name = $resource->getName();
+        $this->resource_version = $resource->getVersion();
+        $this->resource_homepage = $resource->getHomepage();
     }
 }
 
