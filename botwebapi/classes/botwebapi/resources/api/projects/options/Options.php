@@ -9,9 +9,9 @@ class Options extends resources\BotWebApiResource
 {
     private $project_resource = NULL;
     
-    public function __construct($resource_name, $resource_uri, projects\Project $project_resource)
+    public function __construct($resource_uri, projects\Project $project_resource)
     {
-        parent::__construct($resource_name, $resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
         $this->project_resource = $project_resource;
     }
     

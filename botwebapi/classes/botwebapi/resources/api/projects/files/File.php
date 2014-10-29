@@ -9,14 +9,14 @@ class File extends resources\BotWebApiResource
 {
     private $file = NULL;
     
-    public function __construct($resource_name, $resource_uri, $file)
+    public function __construct($resource_uri, $file)
     {
         if(!is_readable($file))
         {
             throw new \Exception('Invalid argument $file');
         }
         
-        parent::__construct($resource_name, $resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
         $this->file = $file;
     }
     

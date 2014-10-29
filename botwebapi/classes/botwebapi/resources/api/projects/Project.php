@@ -10,7 +10,7 @@ class Project extends resources\BotWebApiResource
     private $archive_location = '';
     private $binary_location = '';
     
-    public function __construct($resource_name, $resource_uri, $project_name)
+    public function __construct($resource_uri, $project_name)
     {
         if(!is_readable(ARCHIVES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name))
         {
@@ -21,7 +21,7 @@ class Project extends resources\BotWebApiResource
         $this->archive_location = ARCHIVES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name;
         $this->binary_location = BINARIES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name;
         
-        parent::__construct($resource_name, $resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
     }
     
     public function getProjectName()
@@ -90,7 +90,7 @@ class Project extends resources\BotWebApiResource
         {
             // Load the resource. The class name is <this namespace>\<name>\<Name>
             $resource_class_name = __NAMESPACE__.'\\'.$resource_name.'\\'.ucfirst($resource_name);
-            return new $resource_class_name($resource_name, $this->getResourceUri().'/'.$resource_name, $this);
+            return new $resource_class_name($this->getResourceUri().'/'.$resource_name, $this);
         }
         catch(\Exception $e)
         {

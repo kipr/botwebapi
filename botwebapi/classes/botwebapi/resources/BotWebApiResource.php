@@ -5,22 +5,15 @@ use botwebapi as botwebapi;
 
 abstract class BotWebApiResource
 {
-    private $resource_name = '';
     private $resource_uri = '';
     private $resource_version = '';
     private $resource_homepage = '';
     
-    public function __construct($resource_name, $resource_uri, $resource_version, $resource_homepage)
+    public function __construct($resource_uri, $resource_version, $resource_homepage)
     {
-        $this->resource_name = $resource_name;
         $this->resource_uri = $resource_uri;
         $this->resource_version = $resource_version;
         $this->resource_homepage = $resource_homepage;
-    }
-    
-    public function getResourceName()
-    {
-        return $this->resource_name;
     }
     
     public function getResourceUri()
