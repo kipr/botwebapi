@@ -4,11 +4,45 @@ namespace botwebapi;
 
 class LinksObject
 {
-    public function addLink($href, $rel = 'self', $is_single_link = true)
+    public function addLink($uri = array(), $options = array(), $is_single_link = true)
     {
+        // $uri is an URL as array
+        if(is_array($uri))
+        {
+            $scheme = isset($uri['scheme']) ? $uri['scheme'] : 'http';
+            $user = isset($uri['user']) ? $uri['user'].'@' : '';
+            $host = isset($uri['host']) ? $uri['host'] : $_SERVER['SERVER_NAME'];
+            $path = isset($uri['path']) ? ($uri['path'][0] == '/' ? $uri['path'] : '/'.$uri['path']) : '';
+            $query = isset($uri['query']) ? '?'.$uri['query'] : '';
+            $href = $scheme.'://'.$user.$host.$path.$query;
+        }
+        // $uri is just the path + query
+        else if($uri[0] == '/')
+        {
+            $href = 'http://'.$_SERVER['SERVER_NAME'].$uri;
+        }
+        // $uri is a full URL
+        else
+        {
+            $href = $uri;
+        }
+        
+        $link_object = array('href' => $href);
+        
+        $additional = isset($options['additional']) ? $options['additional'] : array();
+        if(is_array($options['additional']))
+        {
+            foreach($options['additional'] as $key => $value)
+            {
+                $link_object[$key] = $value;
+            }
+        }
+        
+        $rel = isset($options['rel']) ? $options['rel'] : 'self';
+        
         if($is_single_link)
         {
-            $this->{$rel} = array('href' => $href);
+            $this->{$rel} = $link_object;
         }
         else
         {
@@ -17,7 +51,7 @@ class LinksObject
                 $this->{$rel} = array();
             }
             
-            array_push($this->{$rel}, array('href' => $href));
+            array_push($this->{$rel}, $link_object);
         }
     }
 }

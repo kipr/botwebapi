@@ -5,43 +5,43 @@ use botwebapi as botwebapi;
 
 abstract class BotWebApiResource
 {
-    private $name = '';
-    private $uri = '';
-    private $version = '';
-    private $homepage = '';
+    private $resource_name = '';
+    private $resource_uri = '';
+    private $resource_version = '';
+    private $resource_homepage = '';
     
-    public function __construct($name, $uri, $version, $homepage)
+    public function __construct($resource_name, $resource_uri, $resource_version, $resource_homepage)
     {
-        $this->name = $name;
-        $this->uri = $uri;
-        $this->version = $version;
-        $this->homepage = $homepage;
+        $this->resource_name = $resource_name;
+        $this->resource_uri = $resource_uri;
+        $this->resource_version = $resource_version;
+        $this->resource_homepage = $resource_homepage;
     }
     
-    public function getName()
+    public function getResourceName()
     {
-        return $this->name;
+        return $this->resource_name;
     }
     
-    public function getUri()
+    public function getResourceUri()
     {
-        return $this->uri;
+        return $this->resource_uri;
     }
     
-    public function getVersion()
+    public function getResourceVersion()
     {
-        return $this->version;
+        return $this->resource_version;
     }
     
-    public function getHomepage()
+    public function getResourceHomepage()
     {
-        return $this->homepage;
+        return $this->resource_homepage;
     }
     
     public function handleRequest()
     {
         // check if a child addressed
-        preg_match('`^'.$this->getUri().'/*([^/\?]*).*$`', $_SERVER['REQUEST_URI'], $matches);
+        preg_match('`^'.$this->getResourceUri().'/*([^/\?]*).*$`', $_SERVER['REQUEST_URI'], $matches);
         if(!empty($matches[1]))
         {
             // look up the child
@@ -77,7 +77,7 @@ abstract class BotWebApiResource
     protected abstract function handlePutRequest();
     protected abstract function handleDeleteRequest();
     
-    protected abstract function getChild($name);
+    protected abstract function getChild($resource_name);
 }
 
 ?>

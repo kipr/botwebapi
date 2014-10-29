@@ -4,27 +4,31 @@ namespace botwebapi\resources\api\projects;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
+// Set constants
+define('ARCHIVES_ROOT_DIR', '/kovan/archives');
+define('BINARIES_ROOT_DIR', '/kovan/binaries');
+
 class Projects extends resources\BotWebApiResource
 {
-    const PROJECTS_ROOT_DIR = '/kovan/archives';
-    
-    public function __construct($name, $uri)
+    public function __construct($resource_name, $resource_uri)
     {
-        parent::__construct($name, $uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($resource_name, $resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
     }
     
     protected function handleGetRequest()
     {
         $links = new botwebapi\LinksObject();
-        $links->addLink($this->getUri(), 'self');
+        $links->addLink($this->getResourceUri());
         
-        foreach (glob(Projects::PROJECTS_ROOT_DIR.'/*') as $file)
+        foreach (glob(ARCHIVES_ROOT_DIR.'/*') as $file)
         {
             // Link projects are compressed and stored in a single archive
             if(!is_dir($file))
             {
                 $project_name = basename($file);
-                $links->addLink($this->getUri().'/'.$project_name, 'projects', false);
+                $links->addLink($this->getResourceUri().'/'.urlencode($project_name),
+                                array('rel' => 'projects'),
+                                false);
             }
         }
         
@@ -47,15 +51,13 @@ class Projects extends resources\BotWebApiResource
         return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
     }
     
-    protected function getChild($name)
+    protected function getChild($resource_name)
     {
         try
         {
             // Load the resource. The class name is <this namespace>\<name>\<Name>
             $resource_class_name = __NAMESPACE__.'\\Project';
-            return new $resource_class_name($name,
-                                            $this->getUri().'/'.$name,
-                                            Projects::PROJECTS_ROOT_DIR.DIRECTORY_SEPARATOR.$name);
+            return new $resource_class_name($resource_name, $this->getResourceUri().'/'.$resource_name, $resource_name);
         }
         catch(\Exception $e)
         {

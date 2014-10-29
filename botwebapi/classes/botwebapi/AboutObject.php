@@ -10,9 +10,9 @@ class AboutObject
     
     public function __construct($resource)
     {
-        $this->resource_name = $resource->getName();
-        $this->resource_version = $resource->getVersion();
-        $this->resource_homepage = $resource->getHomepage();
+        $this->resource_name = $resource->getResourceName();
+        $this->resource_version = $resource->getResourceVersion();
+        $this->resource_homepage = $resource->getResourceHomepage();
     }
 }
 
