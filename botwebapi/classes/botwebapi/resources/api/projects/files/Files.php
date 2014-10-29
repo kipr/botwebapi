@@ -82,7 +82,18 @@ class Files extends resources\BotWebApiResource
     
     protected function getChild($resource_name)
     {
-        return NULL;
+        try
+        {
+            // Load the resource. The class name is <this namespace>\<name>\<Name>
+            $resource_class_name = __NAMESPACE__.'\\File';
+            return new $resource_class_name($resource_name,
+                                            $this->getResourceUri().'/'.$resource_name,
+                                            $this->temp_dir.DIRECTORY_SEPARATOR.$resource_name);
+        }
+        catch(\Exception $e)
+        {
+            return NULL;
+        }
     }
 }
 
