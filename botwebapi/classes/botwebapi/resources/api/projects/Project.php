@@ -41,9 +41,15 @@ class Project extends resources\BotWebApiResource
     
     protected function handleDeleteRequest()
     {
-        return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
+        if(unlink($this->location))
+        {
+            return new botwebapi\JsonHttpResponse(204, '');
+        }
+        else
+        {
+            return new botwebapi\JsonHttpResponse(404, 'Could not delete '.$this->location);
+        }
     }
-    
     protected function getChild($name)
     {
         return NULL;
