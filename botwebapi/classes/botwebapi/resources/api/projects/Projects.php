@@ -6,7 +6,7 @@ use botwebapi as botwebapi;
 
 // Set constants
 define('ARCHIVES_ROOT_DIR', '/kovan/archives');
-define('BINARIES_ROOT_DIR', '/kovan/binaries');
+define('BINARIES_ROOT_DIR', '/kovan/bin');
 
 class Projects extends resources\BotWebApiResource
 {

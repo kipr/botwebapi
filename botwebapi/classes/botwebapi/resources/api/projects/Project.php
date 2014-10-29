@@ -23,14 +23,17 @@ class Project extends resources\BotWebApiResource
         $this->binary_location = BINARIES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name;
     }
     
+    public function getProjectName()
+    {
+        return $this->project_name;
+    }
+    
     protected function handleGetRequest()
     {
         $links = new botwebapi\LinksObject();
         $links->addLink($this->getResourceUri());
         $links->addLink(array('scheme' => 'sftp', 'path' => $this->archive_location),
-                        array('rel' => 'project_location'));
-        $links->addLink(array('scheme' => 'sftp', 'path' => $this->binary_location),
-                        array('rel' => 'binary_output_folder'));
+                        array('rel' => 'project_location', 'additional' => array('type' => 'application/vnd.KIPR.kar; charset=binary')));
         
         foreach (glob(__DIR__.'/*') as $file)
         {
@@ -44,7 +47,6 @@ class Project extends resources\BotWebApiResource
         }
         
         return new botwebapi\JsonHttpResponse(200, array('name' => $this->project_name,
-                                                         'project_type' => 'KISS/archive',
                                                          'about' => new botwebapi\AboutObject($this),
                                                          'links' => $links));
     }
