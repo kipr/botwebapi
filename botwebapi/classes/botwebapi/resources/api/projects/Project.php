@@ -8,7 +8,6 @@ class Project extends resources\BotWebApiResource
 {
     private $project_name = '';
     private $archive_location = '';
-    private $binary_location = '';
     
     public function __construct($resource_name, $resource_uri, $project_name)
     {
@@ -17,10 +16,10 @@ class Project extends resources\BotWebApiResource
             throw new \Exception('Invalid argument: $project_name');
         }
         
-        parent::__construct($resource_name, $resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
         $this->project_name = $project_name;
         $this->archive_location = ARCHIVES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name;
-        $this->binary_location = BINARIES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name;
+        
+        parent::__construct($resource_name, $resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
     }
     
     public function getProjectName()
@@ -63,13 +62,13 @@ class Project extends resources\BotWebApiResource
     
     protected function handleDeleteRequest()
     {
-        if(unlink($this->location))
+        if(unlink($this->archive_location))
         {
             return new botwebapi\JsonHttpResponse(204, '');
         }
         else
         {
-            return new botwebapi\JsonHttpResponse(404, 'Could not delete '.$this->location);
+            return new botwebapi\JsonHttpResponse(500, 'Could not delete '.$this->location);
         }
     }
     
