@@ -8,6 +8,7 @@ class Project extends resources\BotWebApiResource
 {
     private $project_name = '';
     private $archive_location = '';
+    private $binary_location = '';
     
     public function __construct($resource_name, $resource_uri, $project_name)
     {
@@ -25,6 +26,16 @@ class Project extends resources\BotWebApiResource
     public function getProjectName()
     {
         return $this->project_name;
+    }
+    
+    public function getBinaryLocation()
+    {
+        return $this->binary_location;
+    }
+    
+    public function getArchiveLocation()
+    {
+        return $this->archive_location;
     }
     
     protected function handleGetRequest()

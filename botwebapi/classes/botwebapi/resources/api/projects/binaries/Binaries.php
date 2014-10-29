@@ -18,11 +18,16 @@ function rrmdir($dir)
             {
                 if(filetype($dir."/".$object) == "dir")
                 {
-                    return rrmdir($dir."/".$object);
+                    $result = rrmdir($dir."/".$object);
                 }
                 else
                 {
-                    return unlink($dir."/".$object);
+                    $result = unlink($dir."/".$object);
+                }
+                
+                if(!$result)
+                {
+                    return false;
                 }
             }
         }
@@ -34,17 +39,11 @@ function rrmdir($dir)
 class Binaries extends resources\BotWebApiResource
 {
     private $project_resource = NULL;
-    private $binary_location = '';
     
     public function __construct($resource_name, $resource_uri, projects\Project $project_resource)
     {
         parent::__construct($resource_name, $resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
         $this->project_resource = $project_resource;
-        $this->binary_location = BINARIES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_resource->getProjectName();
-        if(!is_dir($this->binary_location))
-        {
-            throw new \Exception('Invalid argument: $BINARIES_ROOT_DIR');
-        }
     }
     
     protected function handleGetRequest()
@@ -55,7 +54,7 @@ class Binaries extends resources\BotWebApiResource
         $links->addLink(array('scheme' => 'sftp', 'path' => $this->binary_location),
                         array('rel' => 'binary_output_folder', 'additional' => array('type' => 'directory')));
         
-        foreach (glob($this->binary_location.'/*') as $file)
+        foreach (glob($this->project_resource->getBinaryLocation().'/*') as $file)
         {
             $finfo = new \finfo(FILEINFO_MIME);
             $file_name = basename($file);
@@ -76,7 +75,10 @@ class Binaries extends resources\BotWebApiResource
     
     protected function handlePostRequest()
     {
-        return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
+        // currently, we (re-)compile all binaries at once
+        $output = array();
+        exec('programcompiler '.$this->project_resource->getProjectName(), $output);
+        return new botwebapi\JsonHttpResponse(200, array("output" => $output));
     }
     
     protected function handlePutRequest()
@@ -86,13 +88,19 @@ class Binaries extends resources\BotWebApiResource
     
     protected function handleDeleteRequest()
     {
-        if(rrmdir($this->binary_location))
+        // its already deleted
+        if(!is_dir($this->project_resource->getBinaryLocation()))
+        {
+            return new botwebapi\JsonHttpResponse(204, '');
+        }
+        
+        if(rrmdir($this->project_resource->getBinaryLocation()))
         {
             return new botwebapi\JsonHttpResponse(204, '');
         }
         else
         {
-            return new botwebapi\JsonHttpResponse(500, 'Could not delete '.$this->binary_location);
+            return new botwebapi\JsonHttpResponse(500, 'Could not delete '.$this->project_resource->getBinaryLocation());
         }
     }
     
