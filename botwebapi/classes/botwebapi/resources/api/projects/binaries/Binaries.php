@@ -5,6 +5,32 @@ use botwebapi\resources\api\projects as projects;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
+// from http://php.net/manual/en/function.rmdir.php
+// When the directory is not empty:
+function rrmdir($dir)
+{
+    if(is_dir($dir))
+    {
+        $objects = scandir($dir);
+        foreach ($objects as $object)
+        {
+            if ($object != "." && $object != "..")
+            {
+                if(filetype($dir."/".$object) == "dir")
+                {
+                    return rrmdir($dir."/".$object);
+                }
+                else
+                {
+                    return unlink($dir."/".$object);
+                }
+            }
+        }
+        reset($objects);
+        return rmdir($dir);
+    }
+}
+
 class Binaries extends resources\BotWebApiResource
 {
     private $project_resource = NULL;
@@ -15,6 +41,10 @@ class Binaries extends resources\BotWebApiResource
         parent::__construct($resource_name, $resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
         $this->project_resource = $project_resource;
         $this->binary_location = BINARIES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_resource->getProjectName();
+        if(!is_dir($this->binary_location))
+        {
+            throw new \Exception('Invalid argument: $BINARIES_ROOT_DIR');
+        }
     }
     
     protected function handleGetRequest()
@@ -56,7 +86,14 @@ class Binaries extends resources\BotWebApiResource
     
     protected function handleDeleteRequest()
     {
-        return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
+        if(rrmdir($this->binary_location))
+        {
+            return new botwebapi\JsonHttpResponse(204, '');
+        }
+        else
+        {
+            return new botwebapi\JsonHttpResponse(500, 'Could not delete '.$this->binary_location);
+        }
     }
     
     protected function getChild($resource_name)
