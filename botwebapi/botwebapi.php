@@ -28,7 +28,7 @@ require INCLUDE_PATH.DIRECTORY_SEPARATOR.'autoload.php';
 DigestHttpAuthentication::authenticate();
 
 // Create a new api root resource and let it handle the request
-$resource = new resources\api\Api('/api');
+$resource = new resources\api\Api('api', '/api');
 $response = $resource->handleRequest($_SERVER['REQUEST_URI']);
 if(!$response)
 {

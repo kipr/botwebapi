@@ -6,9 +6,9 @@ use botwebapi as botwebapi;
 
 class Api extends resources\BotWebApiResource
 {
-    public function __construct($uri)
+    public function __construct($name, $uri)
     {
-        parent::__construct('api', $uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($name, $uri, '1.0', 'https://github.com/kipr/botwebapi');
     }
     
     protected function handleGetRequest()
@@ -51,7 +51,7 @@ class Api extends resources\BotWebApiResource
         {
             // Load the resource. The class name is <this namespace>\<name>\<Name>
             $resource_class_name = __NAMESPACE__.'\\'.$name.'\\'.ucfirst($name);
-            return new $resource_class_name($this->getUri().'/'.$name);
+            return new $resource_class_name($name, $this->getUri().'/'.$name);
         }
         catch(\Exception $e)
         {

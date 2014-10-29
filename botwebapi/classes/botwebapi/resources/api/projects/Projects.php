@@ -4,29 +4,13 @@ namespace botwebapi\resources\api\projects;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
-class ProjectDescriptor
-{
-    public $name;
-    public $location;
-    public $uri;
-    public $about;
-    
-    public function __construct($name, $uri, $location, $about)
-    {
-        $this->name = $name;
-        $this->uri = $uri;
-        $this->location = $location;
-        $this->about = $about;
-    }
-}
-
 class Projects extends resources\BotWebApiResource
 {
     const PROJECTS_ROOT_DIR = '/kovan/archives';
     
-    public function __construct($uri)
+    public function __construct($name, $uri)
     {
-        parent::__construct('projects', $uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($name, $uri, '1.0', 'https://github.com/kipr/botwebapi');
     }
     
     protected function handleGetRequest()
@@ -50,7 +34,7 @@ class Projects extends resources\BotWebApiResource
     
     protected function handlePostRequest()
     {
-        return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
+        return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
     }
     
     protected function handlePutRequest()
@@ -60,7 +44,7 @@ class Projects extends resources\BotWebApiResource
     
     protected function handleDeleteRequest()
     {
-        return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
+        return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
     }
     
     protected function getChild($name)
