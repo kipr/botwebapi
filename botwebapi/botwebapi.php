@@ -23,6 +23,7 @@ set_exception_handler('botwebapi\exception_handler');
 
 // include files
 require INCLUDE_PATH.DIRECTORY_SEPARATOR.'autoload.php';
+require INCLUDE_PATH.DIRECTORY_SEPARATOR.'file_system_helper.php';
 
 // Authenticate the user
 DigestHttpAuthentication::authenticate();

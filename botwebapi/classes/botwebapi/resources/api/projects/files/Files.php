@@ -9,16 +9,60 @@ use botwebapi as botwebapi;
 class Files extends resources\BotWebApiResource
 {
     private $project_resource = NULL;
+    private $temp_dir = NULL;
     
     public function __construct($resource_name, $resource_uri, projects\Project $project_resource)
     {
         parent::__construct($resource_name, $resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
         $this->project_resource = $project_resource;
+        
+        // unpack the files in a temporary directory
+        $tmp_dir = sys_get_temp_dir().'/kiss_'.uniqid();
+        while(file_exists($tmp_dir))
+        {
+	        $tmp_dir = sys_get_temp_dir().'/kiss_'.uniqid();
+        }
+        
+        if(mkdir($tmp_dir))
+        {
+            $this->temp_dir = $tmp_dir;
+	        $tmp_kar_file = $this->temp_dir.'/'.$this->project_resource->getProjectName();
+	        
+	        if(copy($this->project_resource->getArchiveLocation(), $tmp_kar_file.'.kiss'))
+	        {
+		        exec('kissarchive -e '.$tmp_kar_file.' '.$this->temp_dir.'/');
+	        }
+        }
+    }
+    
+    public function __destruct()
+    {
+        if($this->temp_dir != NULL)
+        {
+            rrmdir($this->temp_dir);
+        }
     }
     
     protected function handleGetRequest()
     {
-        return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
+        $links = new botwebapi\LinksObject();
+        $links->addLink($this->getResourceUri());
+        
+        $finfo = new \finfo(FILEINFO_MIME);
+        foreach (glob($this->temp_dir.'/*') as $file)
+        {
+            $file_name = basename($file);
+            if($file_name !== $this->project_resource->getProjectName().'.kiss')
+            {
+                $links->addLink($this->getResourceUri().'/'.urlencode($file_name),
+                                array('rel' => files,
+                                      'additional' => array('type' => $finfo->file($file))),
+                                false);
+            }
+        }
+        
+        return new botwebapi\JsonHttpResponse(200, array('about' => new botwebapi\AboutObject($this),
+                                                         'links' => $links));
     }
     
     protected function handlePostRequest()
