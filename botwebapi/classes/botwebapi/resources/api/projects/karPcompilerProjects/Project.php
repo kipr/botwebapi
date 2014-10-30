@@ -1,8 +1,12 @@
 <?php
 
-namespace botwebapi\resources\api\projects;
+namespace botwebapi\resources\api\projects\karPcompilerProjects;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
+
+// Set constants
+define('ARCHIVES_ROOT_DIR', '/kovan/archives');
+define('BINARIES_ROOT_DIR', '/kovan/bin');
 
 class Project extends resources\BotWebApiResource
 {
@@ -10,7 +14,7 @@ class Project extends resources\BotWebApiResource
     private $archive_location = '';
     private $binary_location = '';
     
-    public function __construct($resource_uri, $project_name)
+    public function __construct($project_name, $resource_uri)
     {
         if(!is_readable(ARCHIVES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name))
         {

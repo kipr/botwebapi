@@ -1,7 +1,7 @@
 <?php
 
-namespace botwebapi\resources\api\projects\binaries;
-use botwebapi\resources\api\projects as projects;
+namespace botwebapi\resources\api\projects\karPcompilerProjects\binaries;
+use botwebapi\resources\api\projects\karPcompilerProjects as karPcompilerProjects;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
@@ -9,7 +9,7 @@ class Binaries extends resources\BotWebApiResource
 {
     private $project_resource = NULL;
     
-    public function __construct($resource_uri, projects\Project $project_resource)
+    public function __construct($resource_uri, karPcompilerProjects\Project $project_resource)
     {
         parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
         $this->project_resource = $project_resource;

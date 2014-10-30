@@ -4,6 +4,16 @@ namespace botwebapi\resources\api;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
+/**
+ * Bot Web API Root Resource
+ * 
+ * Its purpose is to serve as a container for other resources.
+ * Per convention, all child resource classes
+ *  * are named: __NAMESPACE__\<name>\<Name>
+ *    => this implies that the class file location will be __DIR__/<name>/<Name>
+ *  * have a __construct($resource_uri) constructor where $resource_uri is the URI of the newly created resource.
+ * 
+ */
 class Api extends resources\BotWebApiResource
 {
     public function __construct($resource_uri)
@@ -16,10 +26,9 @@ class Api extends resources\BotWebApiResource
         $links = new botwebapi\LinksObject();
         $links->addLink($this->getResourceUri());
         
-        foreach (glob(__DIR__.'/*') as $file)
+        foreach (glob(__DIR__.DIRECTORY_SEPARATOR.'*') as $file)
         {
-            // the children of api are always located in a directory
-            if(is_dir($file) && !is_link($file))
+            if(is_dir($file))
             {
                 $child_resource_name = basename($file);
                 $links->addLink($this->getResourceUri().'/'.urlencode($child_resource_name),
@@ -50,7 +59,6 @@ class Api extends resources\BotWebApiResource
     {
         try
         {
-            // Load the resource. The class name is <this namespace>\<name>\<Name>
             $resource_class_name = __NAMESPACE__.'\\'.$resource_name.'\\'.ucfirst($resource_name);
             return new $resource_class_name($this->getResourceUri().'/'.$resource_name);
         }

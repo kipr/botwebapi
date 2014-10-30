@@ -1,7 +1,7 @@
 <?php
 
-namespace botwebapi\resources\api\projects\files;
-use botwebapi\resources\api\projects as projects;
+namespace botwebapi\resources\api\projects\karPcompilerProjects\files;
+use botwebapi\resources\api\projects\karPcompilerProjects as karPcompilerProjects;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
@@ -11,7 +11,7 @@ class Files extends resources\BotWebApiResource
     private $project_resource = NULL;
     private $temp_dir = NULL;
     
-    public function __construct($resource_uri, projects\Project $project_resource)
+    public function __construct($resource_uri, karPcompilerProjects\Project $project_resource)
     {
         parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
         $this->project_resource = $project_resource;

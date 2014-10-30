@@ -4,15 +4,42 @@ namespace botwebapi\resources\api\projects;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
-// Set constants
-define('ARCHIVES_ROOT_DIR', '/kovan/archives');
-define('BINARIES_ROOT_DIR', '/kovan/bin');
-
+/**
+ * Projects Resource
+ * 
+ * Its purpose is to serve as a container for project resources.
+ * As project handling is platform-dependent, Projects searches all subdirectoies for project providers
+ * Per convention, all project provider classes
+ *  *  are named: __NAMESPACE__\<name>\<Name>
+ *    => this implies that the class file location will be __DIR__/<name>/<Name>
+ *  * have a default constructor.
+ *  * implement botwebapi\resources\api\projects\iProjectProvider
+ */
 class Projects extends resources\BotWebApiResource
 {
+    private $project_providers = array();
+    
     public function __construct($resource_uri)
     {
         parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+        
+        // register project providers
+        foreach (glob(__DIR__.DIRECTORY_SEPARATOR.'*') as $file)
+        {
+            if(is_dir($file))
+            {
+                try
+                {
+                    $project_provider_name = basename($file);
+                    $project_provider_class_name
+                        = __NAMESPACE__.'\\'.$project_provider_name.'\\'.ucfirst($project_provider_name);
+                    $project_provider = new $project_provider_class_name();
+                    
+                    array_push($this->project_providers, $project_provider);
+                }
+                catch(\Exception $e) { }
+            }
+        }
     }
     
     protected function handleGetRequest()
@@ -20,12 +47,11 @@ class Projects extends resources\BotWebApiResource
         $links = new botwebapi\LinksObject();
         $links->addLink($this->getResourceUri());
         
-        foreach (glob(ARCHIVES_ROOT_DIR.'/*') as $file)
+        foreach($this->project_providers as $project_provider)
         {
-            // Link projects are compressed and stored in a single archive
-            if(!is_dir($file))
+            $project_names = $project_provider->getProjectNames();
+            foreach($project_names as $project_name)
             {
-                $project_name = basename($file);
                 $links->addLink($this->getResourceUri().'/'.urlencode($project_name),
                                 array('rel' => 'projects'),
                                 false);
@@ -53,16 +79,15 @@ class Projects extends resources\BotWebApiResource
     
     protected function getChild($resource_name)
     {
-        try
+        foreach($this->project_providers as $project_provider)
         {
-            // Load the resource. The class name is <this namespace>\<name>\<Name>
-            $resource_class_name = __NAMESPACE__.'\\Project';
-            return new $resource_class_name($this->getResourceUri().'/'.$resource_name, $resource_name);
+            if($project_provider->containsProject($resource_name))
+            {
+                return $project_provider->getProjectResource($resource_name, $this->getResourceUri().'/'.$resource_name);
+            }
         }
-        catch(\Exception $e)
-        {
-            return NULL;
-        }
+        
+        return NULL;
     }
 }
 ?>
