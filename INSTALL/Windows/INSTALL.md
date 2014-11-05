@@ -9,6 +9,7 @@ This guide describes how to install the Bot Web API Server on Microsoft Windows.
 ### 1.1 Install PHP
 1. Download the latest version from [here](http://windows.php.net/download/).
 2. Extract the archive content into `C:\php` or another folder (the folder path cannot have any spaces).
+3. Rename `C:\php\php.ini-production` to `C:\php\php.ini`
 
 ### 1.2 Install Lighttpd
 We will use [Lighttpd](http://redmine.lighttpd.net/) as web server as it does not require an installation.
