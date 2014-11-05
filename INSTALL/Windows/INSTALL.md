@@ -27,6 +27,8 @@ If not already done, install your favorite git tool (e.g. [git](http://git-scm.c
 Clone `https://github.com/kipr/botwebapi.git` with your git tool. The subsequent steps will assume that you cloned it into `C:\Users\stefan\Documents\Projects\botwebapi`
 
 #### Patch the config files and link Bot Web API into the system
+Open a Command Prompt as administrator and type:
+
 ```
 C:\WINDOWS\system32>del C:\LightTPD\conf\lighttpd.conf
 C:\WINDOWS\system32>mklink C:\LightTPD\conf\lighttpd.conf C:\Users\stefan\Documents\Projects\botwebapi\INSTALL\Windows\lighttpd\lighttpd.conf
