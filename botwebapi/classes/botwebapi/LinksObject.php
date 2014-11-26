@@ -29,7 +29,6 @@ class LinksObject
         
         $link_object = array('href' => $href);
         
-        $additional = isset($options['additional']) ? $options['additional'] : array();
         if(is_array($options['additional']))
         {
             foreach($options['additional'] as $key => $value)
