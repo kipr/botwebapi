@@ -53,7 +53,8 @@ class Projects extends resources\BotWebApiResource
             foreach($project_names as $project_name)
             {
                 $links->addLink($this->getResourceUri().'/'.urlencode($project_name),
-                                array('rel' => 'projects'),
+                                array('rel' => 'projects',
+                                         'additional' => array('name' => $project_name)),
                                 false);
             }
         }
