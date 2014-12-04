@@ -65,7 +65,7 @@ class Fs extends resources\BotWebApiResource
             
             return new botwebapi\JsonHttpResponse(200, array('about' => new botwebapi\AboutObject($this),
                                                                                      'name' => basename($this->path),
-                                                                                     'path' =>  $this->path,
+                                                                                     'path' =>  str_replace(':/', ':', $this->path),
                                                                                      'type' => filetype($this->path),
                                                                                      'mime_type' => $finfo->file($this->path),
                                                                                      'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
@@ -79,7 +79,7 @@ class Fs extends resources\BotWebApiResource
                 $content_b64 = base64_encode($content);
                 return new botwebapi\JsonHttpResponse(200, array('about' => new botwebapi\AboutObject($this),
                                                                                          'name' => basename($this->path),
-                                                                                         'path' =>  $this->path,
+                                                                                         'path' =>  str_replace(':/', ':', $this->path),
                                                                                          'type' => filetype($this->path),
                                                                                          'mime_type' => $finfo->file($this->path),
                                                                                          'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
@@ -90,7 +90,7 @@ class Fs extends resources\BotWebApiResource
             {
                 return new botwebapi\JsonHttpResponse(200, array('about' => new botwebapi\AboutObject($this),
                                                                                          'name' => basename($this->path),
-                                                                                         'path' =>  $this->path,
+                                                                                         'path' =>  str_replace(':/', ':', $this->path),
                                                                                          'type' => filetype($this->path),
                                                                                          'mime_type' => $finfo->file($this->path),
                                                                                          'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
