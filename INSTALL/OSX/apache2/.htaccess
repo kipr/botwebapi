@@ -1,0 +1,8 @@
+Options +FollowSymLinks
+RewriteEngine On
+
+RewriteCond $1 !-f
+RewriteRule ^(.*)/(.*)$ /api/botwebapi.php?$2 [END]
+
+RewriteCond $1 !-f
+RewriteRule ^(.*)$ /api/botwebapi.php [END]

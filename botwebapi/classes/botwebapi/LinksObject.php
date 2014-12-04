@@ -38,7 +38,7 @@ class LinksObject
         }
             
         // add the type if not specified
-        if(!array_key_exists('type', $link_object['type']))
+        if(!array_key_exists('type', $link_object))
         {
             $link_object['type'] = 'application/vnd.KIPR.BotWebApi; charset=utf-8';
         }

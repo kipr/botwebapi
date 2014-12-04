@@ -68,7 +68,7 @@ class Fs extends resources\BotWebApiResource
                                                                                      'path' =>  str_replace(':/', ':', $this->path),
                                                                                      'type' => filetype($this->path),
                                                                                      'mime_type' => $finfo->file($this->path),
-                                                                                     'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
+                                                                                 //  'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
                                                                                      'links' => $links));
         }
         else
@@ -82,7 +82,7 @@ class Fs extends resources\BotWebApiResource
                                                                                          'path' =>  str_replace(':/', ':', $this->path),
                                                                                          'type' => filetype($this->path),
                                                                                          'mime_type' => $finfo->file($this->path),
-                                                                                         'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
+                                                                                     //  'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
                                                                                          'links' => $links,
                                                                                          'content' => $content_b64));
             }
@@ -93,7 +93,7 @@ class Fs extends resources\BotWebApiResource
                                                                                          'path' =>  str_replace(':/', ':', $this->path),
                                                                                          'type' => filetype($this->path),
                                                                                          'mime_type' => $finfo->file($this->path),
-                                                                                         'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
+                                                                                     //  'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
                                                                                          'links' => $links));
             }
         }

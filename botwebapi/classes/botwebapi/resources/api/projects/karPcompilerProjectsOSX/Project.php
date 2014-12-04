@@ -1,12 +1,12 @@
 <?php
 
-namespace botwebapi\resources\api\projects\karPcompilerProjectsWindows;
+namespace botwebapi\resources\api\projects\karPcompilerProjectsOSX;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
 // Set constants
-define('WIN_PROJECTS_ROOT_DIR','C:\Users\stefa_000\Documents\Projects\KISS-Projects');
-define('WIN_PROJECTS_ROOT_DIR_FS_RESOURCE','api/fs/Users/stefa_000/Documents/Projects/KISS-Projects');
+define('OSX_PROJECTS_ROOT_DIR','/Users/stefan/Documents/KISSProjects');
+define('OSX_PROJECTS_ROOT_DIR_FS_RESOURCE','api/fs/Users/stefan/Documents/KISSProjects');
 
 class Project extends resources\BotWebApiResource
 {
@@ -16,7 +16,7 @@ class Project extends resources\BotWebApiResource
     
     public function __construct($project_name, $resource_uri)
     {
-        if(!is_readable(WIN_PROJECTS_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name))
+        if(!is_readable(OSX_PROJECTS_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name))
         {
             throw new \Exception('Invalid argument: $project_name');
         }
@@ -33,21 +33,21 @@ class Project extends resources\BotWebApiResource
     
     public function getBinaryOutputDirectory()
     {
-        return WIN_PROJECTS_ROOT_DIR.DIRECTORY_SEPARATOR.$this->project_name;
+        return OSX_PROJECTS_ROOT_DIR.DIRECTORY_SEPARATOR.$this->project_name;
     }
     
     public function getBinaryOutputName()
     {
-        return $this->project_name.'.exe';
+        return $this->project_name;
     }
     
     protected function handleGetRequest()
     {
         $links = new botwebapi\LinksObject();
         $links->addLink($this->getResourceUri());
-        $links->addLink(array('path' => WIN_PROJECTS_ROOT_DIR_FS_RESOURCE.'/'.$this->project_name),
+        $links->addLink(array('path' => OSX_PROJECTS_ROOT_DIR_FS_RESOURCE.'/'.$this->project_name),
                              array('rel' => 'project_location'));
-        $links->addLink(array('path' => WIN_PROJECTS_ROOT_DIR_FS_RESOURCE.'/'.$this->project_name),
+        $links->addLink(array('path' => OSX_PROJECTS_ROOT_DIR_FS_RESOURCE.'/'.$this->project_name),
                              array('rel' => 'files'));
         $links->addLink(array('path' => $this->getResourceUri().'/binary'),
                              array('rel' => 'binary'));
