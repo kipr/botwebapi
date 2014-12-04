@@ -7,6 +7,15 @@ define('API_ROOT_PATH', dirname($_SERVER['SCRIPT_FILENAME']));
 define('INCLUDE_PATH', API_ROOT_PATH.DIRECTORY_SEPARATOR.'includes');
 define('CLASS_PATH', API_ROOT_PATH.DIRECTORY_SEPARATOR.'classes');
 
+if(defined('PHP_WINDOWS_VERSION_MAJOR'))
+{
+    define('PLATFORM', 'WIN');
+}
+else
+{
+    define('PLATFORM', 'LINK');
+}
+
 // Create and send response helpers
 function sendHttpResponseAndExit($status_code, $content)
 {
