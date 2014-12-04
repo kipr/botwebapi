@@ -26,29 +26,33 @@ class DigestHttpAuthentication
             $content = file_get_contents($device_conf_path);
             preg_match('`kovan_serial/password: (.*)\n`', $content, $matches);
             $password = $matches[1];
-            
-            if (!($data = http_digest_parse($_SERVER['PHP_AUTH_DIGEST'])))
-            {
-                $response = new botwebapi\JsonHttpResponse(500, 'Invalid PHP_AUTH_DIGEST');
-                HttpResponse::sendHttpResponseAndExit($response);
-            }
-            
-            // calculate the valid response
-            $ha1 = md5($data['username'].':'.BOT_WEB_API_REALM.':'.$password);
-            $ha2 = md5($_SERVER['REQUEST_METHOD'].':'.$data['uri']);
-            $valid_response = md5($ha1.':'.$data['nonce'].':'.$data['nc'].':'.$data['cnonce'].':'.$data['qop'].':'.$ha2);
-            
-            // and compare it with the one given by the request
-            if($data['response'] != $valid_response)
-            {
-                $response = new JsonHttpResponse(401,
-                                                 'Authentication required',
-                                                 array('WWW-Authenticate' => 'Digest realm="'.BOT_WEB_API_REALM.
-                                                                             '",qop="auth",nonce="'.uniqid().
-                                                                             '",opaque="'.md5(BOT_WEB_API_REALM).'"'));
-                HttpResponse::sendHttpResponseAndExit($response);
-            }
-        } 
+        }
+        else
+        {
+            $password = 'KISS';
+        }
+        
+        if (!($data = http_digest_parse($_SERVER['PHP_AUTH_DIGEST'])))
+        {
+            $response = new botwebapi\JsonHttpResponse(500, 'Invalid PHP_AUTH_DIGEST');
+            HttpResponse::sendHttpResponseAndExit($response);
+        }
+        
+        // calculate the valid response
+        $ha1 = md5($data['username'].':'.BOT_WEB_API_REALM.':'.$password);
+        $ha2 = md5($_SERVER['REQUEST_METHOD'].':'.$data['uri']);
+        $valid_response = md5($ha1.':'.$data['nonce'].':'.$data['nc'].':'.$data['cnonce'].':'.$data['qop'].':'.$ha2);
+        
+        // and compare it with the one given by the request
+        if($data['response'] != $valid_response)
+        {
+            $response = new JsonHttpResponse(401,
+                                             'Authentication required',
+                                             array('WWW-Authenticate' => 'Digest realm="'.BOT_WEB_API_REALM.
+                                                                         '",qop="auth",nonce="'.uniqid().
+                                                                         '",opaque="'.md5(BOT_WEB_API_REALM).'"'));
+            HttpResponse::sendHttpResponseAndExit($response);
+        }
     } 
 }
 

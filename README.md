@@ -9,6 +9,7 @@ Bot Web API is a web-based interface for KIPR robot controllers. It allows user 
 Currently supported Bot Web API server operating systems:
 * [KIPR Link](INSTALL/Link/INSTALL.md)
 * [Microsoft Windows](INSTALL/Windows/INSTALL.md)
+* [Apple OS X](INSTALL/OSX/INSTALL.md)
 
 ## 2 API
 API specifications:

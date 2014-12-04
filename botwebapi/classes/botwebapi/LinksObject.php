@@ -36,6 +36,12 @@ class LinksObject
                 $link_object[$key] = $value;
             }
         }
+            
+        // add the type if not specified
+        if(!array_key_exists('type', $link_object['type']))
+        {
+            $link_object['type'] = 'application/vnd.KIPR.BotWebApi; charset=utf-8';
+        }
         
         $rel = isset($options['rel']) ? $options['rel'] : 'self';
         

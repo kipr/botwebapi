@@ -17,6 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
   exit;
 }
 
+if(defined('PHP_WINDOWS_VERSION_MAJOR'))
+{
+    define('PLATFORM', 'WIN');
+}
+else
+{
+    define('PLATFORM', 'LINK');
+}
 
 // Create and send response helpers
 function sendHttpResponseAndExit($status_code, $content)
