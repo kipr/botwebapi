@@ -31,10 +31,10 @@ abstract class BotWebApiResource
         return $this->resource_homepage;
     }
     
-    public function handleRequest()
+    public function handleRequest($uri)
     {
         // check if a child addressed
-        preg_match('`^'.$this->getResourceUri().'/*([^/\?]*).*$`', $_SERVER['REQUEST_URI'], $matches);
+        preg_match('`^'.$this->getResourceUri().'/*([^/\?]*).*$`', $uri, $matches);
         if(!empty($matches[1]))
         {
             // look up the child
