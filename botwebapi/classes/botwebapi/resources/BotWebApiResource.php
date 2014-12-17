@@ -41,7 +41,7 @@ abstract class BotWebApiResource
             $resource = $this->getChild($matches[1]);
             if($resource)
             {
-                return $resource->handleRequest();
+                return $resource->handleRequest($uri);
             }
             else
             {
