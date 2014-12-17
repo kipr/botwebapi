@@ -51,25 +51,25 @@ class Fs extends resources\BotWebApiResource
                 {
                     $links->addLink($this->getResourceUri().'/'.urlencode($file_name),
                                     array('rel' => 'directories',
-                                             'additional' => array('name' => $file_name)),
+                                          'additional' => array('name' => $file_name)),
                                     false);
                 }
                 else
                 {
                     $links->addLink($this->getResourceUri().'/'.urlencode($file_name),
                                     array('rel' => 'files',
-                                             'additional' => array('name' => $file_name)),
+                                          'additional' => array('name' => $file_name)),
                                     false);
                 }
             }
             
             return new botwebapi\JsonHttpResponse(200, array('about' => new botwebapi\AboutObject($this),
-                                                                                     'name' => basename($this->path),
-                                                                                     'path' =>  str_replace(':/', ':', $this->path),
-                                                                                     'type' => filetype($this->path),
-                                                                                     'mime_type' => $finfo->file($this->path),
-                                                                                 //  'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
-                                                                                     'links' => $links));
+                                                             'name' => basename($this->path),
+                                                             'path' =>  str_replace(':/', ':', $this->path),
+                                                             'type' => filetype($this->path),
+                                                             'mime_type' => $finfo->file($this->path),
+                                                         //  'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
+                                                             'links' => $links));
         }
         else
         {
@@ -78,23 +78,23 @@ class Fs extends resources\BotWebApiResource
             {
                 $content_b64 = base64_encode($content);
                 return new botwebapi\JsonHttpResponse(200, array('about' => new botwebapi\AboutObject($this),
-                                                                                         'name' => basename($this->path),
-                                                                                         'path' =>  str_replace(':/', ':', $this->path),
-                                                                                         'type' => filetype($this->path),
-                                                                                         'mime_type' => $finfo->file($this->path),
-                                                                                     //  'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
-                                                                                         'links' => $links,
-                                                                                         'content' => $content_b64));
-            }
+                                                                 'name' => basename($this->path),
+                                                                 'path' =>  str_replace(':/', ':', $this->path),
+                                                                 'type' => filetype($this->path),
+                                                                 'mime_type' => $finfo->file($this->path),
+                                                             //  'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
+                                                                 'links' => $links,
+                                                                 'content' => $content_b64));
+}
             else
             {
                 return new botwebapi\JsonHttpResponse(200, array('about' => new botwebapi\AboutObject($this),
-                                                                                         'name' => basename($this->path),
-                                                                                         'path' =>  str_replace(':/', ':', $this->path),
-                                                                                         'type' => filetype($this->path),
-                                                                                         'mime_type' => $finfo->file($this->path),
-                                                                                     //  'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
-                                                                                         'links' => $links));
+                                                                 'name' => basename($this->path),
+                                                                 'path' =>  str_replace(':/', ':', $this->path),
+                                                                 'type' => filetype($this->path),
+                                                                 'mime_type' => $finfo->file($this->path),
+                                                             //  'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
+                                                                 'links' => $links));
             }
         }
     }
