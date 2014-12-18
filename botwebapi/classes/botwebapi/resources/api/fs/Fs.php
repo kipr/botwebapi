@@ -101,7 +101,56 @@ class Fs extends resources\BotWebApiResource
     
     protected function handlePostRequest()
     {
-        return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
+        if(is_file($this->path))
+        {
+            return new botwebapi\JsonHttpResponse(405, 'Method not allowed on a file resource');
+        }
+        
+        $json_data = json_decode(file_get_contents('php://input'), true);
+        if(!array_key_exists('name', $json_data))
+        {
+            return new botwebapi\JsonHttpResponse(422, 'Parameter "name" required');
+        }
+        
+        $path = $this->path.DIRECTORY_SEPARATOR.$json_data["name"];
+        if(file_exists($path))
+        {
+            return new botwebapi\JsonHttpResponse(409, $path.' already exists');
+        }
+        
+        if(array_key_exists('is_dir', $json_data) && $json_data["is_dir"])
+        {
+            if(mkdir($path))
+            {
+                return new botwebapi\HttpResponse(201, '', array('Location' => $this->getResourceUri().'/'.urlencode($json_data["name"])));
+            }
+            else
+            {
+                return new botwebapi\JsonHttpResponse(500, 'Unable to create directory');
+            }
+        }
+        else
+        {
+            if(array_key_exists('content', $json_data))
+            {
+                $content = base64_decode($json_data['content']);
+                if($content === FALSE)
+                {
+                    return new botwebapi\JsonHttpResponse(415, 'Parameter "content" is not base64 encoded');
+                }
+            }
+            else
+            {
+                $content = NULL;
+            }
+            
+            if(file_put_contents($path, $content) === FALSE)
+            {
+                return new botwebapi\JsonHttpResponse(500, 'Unable to write content');
+            }
+            
+            return new botwebapi\HttpResponse(201, '', array('Location' => $this->getResourceUri().'/'.urlencode($json_data["name"])));
+        }
     }
     
     protected function handlePutRequest()
