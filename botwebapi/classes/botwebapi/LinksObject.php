@@ -29,7 +29,7 @@ class LinksObject
         
         $link_object = array('href' => $href);
         
-        if(is_array($options['additional']))
+        if(array_key_exists('additional', $options) && is_array($options['additional']))
         {
             foreach($options['additional'] as $key => $value)
             {
