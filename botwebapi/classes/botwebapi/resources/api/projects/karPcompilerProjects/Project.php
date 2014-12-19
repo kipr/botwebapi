@@ -43,7 +43,7 @@ class Project extends resources\BotWebApiResource
         return $this->archive_location;
     }
     
-    protected function handleGetRequest()
+    protected function get()
     {
         $links = new botwebapi\LinksObject();
         $links->addLink($this->getResourceUri());
@@ -66,17 +66,17 @@ class Project extends resources\BotWebApiResource
                                                          'links' => $links));
     }
     
-    protected function handlePostRequest()
+    public function post($content)
     {
         return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
     }
     
-    protected function handlePutRequest()
+    public function put($content)
     {
         return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
     }
     
-    protected function handleDeleteRequest()
+    public function delete($content)
     {
         if(unlink($this->archive_location))
         {

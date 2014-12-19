@@ -15,22 +15,22 @@ class Options extends resources\BotWebApiResource
         $this->project_resource = $project_resource;
     }
     
-    protected function handleGetRequest()
+    public function get()
     {
         return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
     }
     
-    protected function handlePostRequest()
+    public function post($content)
     {
         return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
     }
     
-    protected function handlePutRequest()
+    public function put($content)
     {
         return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
     }
     
-    protected function handleDeleteRequest()
+    public function delete($content)
     {
         return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
     }

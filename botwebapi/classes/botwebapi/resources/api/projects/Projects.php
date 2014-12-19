@@ -42,7 +42,7 @@ class Projects extends resources\BotWebApiResource
         }
     }
     
-    protected function handleGetRequest()
+    public function get()
     {
         $links = new botwebapi\LinksObject();
         $links->addLink($this->getResourceUri());
@@ -63,17 +63,17 @@ class Projects extends resources\BotWebApiResource
                                                          'links' => $links));
     }
     
-    protected function handlePostRequest()
+    public function post($content)
     {
         return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
     }
     
-    protected function handlePutRequest()
+    public function put($content)
     {
         return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
     }
     
-    protected function handleDeleteRequest()
+    public function delete($content)
     {
         return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
     }

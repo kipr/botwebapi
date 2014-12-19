@@ -19,7 +19,7 @@ class File extends resources\BotWebApiResource
         $this->file = $file;
     }
     
-    protected function handleGetRequest()
+    public function get()
     {
 		$content = file_get_contents($this->file);
 		if($content)
@@ -31,17 +31,17 @@ class File extends resources\BotWebApiResource
         }
     }
     
-    protected function handlePostRequest()
+    public function post($content)
     {
         return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
     }
     
-    protected function handlePutRequest()
+    public function put($content)
     {
         return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
     }
     
-    protected function handleDeleteRequest()
+    public function delete($content)
     {
         return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
     }

@@ -21,7 +21,7 @@ class Api extends resources\BotWebApiResource
         parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
     }
     
-    protected function handleGetRequest()
+    public function get()
     {
         $links = new botwebapi\LinksObject();
         $links->addLink($this->getResourceUri());
@@ -40,17 +40,17 @@ class Api extends resources\BotWebApiResource
                                                          'links' => $links));
     }
     
-    protected function handlePostRequest()
+    public function post($content)
     {
         return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
     }
     
-    protected function handlePutRequest()
+    public function put($content)
     {
         return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
     }
     
-    protected function handleDeleteRequest()
+    public function delete($content)
     {
         return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
     }

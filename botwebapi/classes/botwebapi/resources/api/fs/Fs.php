@@ -34,10 +34,16 @@ class Fs extends resources\BotWebApiResource
         }
     }
     
-    protected function handleGetRequest()
+    public function get()
     {
         $links = new botwebapi\LinksObject();
         $links->addLink($this->getResourceUri());
+        
+        if($this->getParentUri())
+        {
+            $links->addLink(array('parent' => $this->getParentUri()),
+                                  array('rel' => 'parent'));
+        }
         
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
         
@@ -85,7 +91,7 @@ class Fs extends resources\BotWebApiResource
                                                              //  'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
                                                                  'links' => $links,
                                                                  'content' => $content_b64));
-}
+            }
             else
             {
                 return new botwebapi\JsonHttpResponse(200, array('about' => new botwebapi\AboutObject($this),
@@ -99,14 +105,14 @@ class Fs extends resources\BotWebApiResource
         }
     }
     
-    protected function handlePostRequest()
+    public function post($content)
     {
         if(is_file($this->path))
         {
             return new botwebapi\JsonHttpResponse(405, 'Method not allowed on a file resource');
         }
         
-        $json_data = json_decode(file_get_contents('php://input'), true);
+        $json_data = json_decode($content, true);
         if(!array_key_exists('name', $json_data))
         {
             return new botwebapi\JsonHttpResponse(422, 'Parameter "name" required');
@@ -133,18 +139,18 @@ class Fs extends resources\BotWebApiResource
         {
             if(array_key_exists('content', $json_data))
             {
-                $content = base64_decode($json_data['content']);
-                if($content === FALSE)
+                $file_content = base64_decode($json_data['content']);
+                if($file_content === FALSE)
                 {
                     return new botwebapi\JsonHttpResponse(415, 'Parameter "content" is not base64 encoded');
                 }
             }
             else
             {
-                $content = NULL;
+                $file_content = NULL;
             }
             
-            if(file_put_contents($path, $content) === FALSE)
+            if(file_put_contents($path, $file_content) === FALSE)
             {
                 return new botwebapi\JsonHttpResponse(500, 'Unable to write content');
             }
@@ -153,14 +159,14 @@ class Fs extends resources\BotWebApiResource
         }
     }
     
-    protected function handlePutRequest()
+    public function put($content)
     {
         if(is_dir($this->path))
         {
             return new botwebapi\JsonHttpResponse(405, 'Method not allowed on a directory resource');
         }
         
-        $json_data = json_decode(file_get_contents('php://input'), true);
+        $json_data = json_decode($content, true);
         if(!array_key_exists('content', $json_data))
         {
             return new botwebapi\JsonHttpResponse(422, 'Parameter "content" required');
@@ -171,13 +177,13 @@ class Fs extends resources\BotWebApiResource
             return new botwebapi\JsonHttpResponse(403, 'Cannot open file for writing');
         }
         
-        $content = base64_decode($json_data['content']);
-        if($content === FALSE)
+        $file_content = base64_decode($json_data['content']);
+        if($file_content === FALSE)
         {
             return new botwebapi\JsonHttpResponse(415, 'Parameter "content" is not base64 encoded');
         }
         
-        if(file_put_contents($this->path, $content) === FALSE)
+        if(file_put_contents($this->path, $file_content) === FALSE)
         {
             return new botwebapi\JsonHttpResponse(500, 'Unable to write content');
         }
@@ -185,7 +191,7 @@ class Fs extends resources\BotWebApiResource
         return new botwebapi\HttpResponse(204);
     }
     
-    protected function handleDeleteRequest()
+    public function delete($content)
     {
         if(is_dir($this->path))
         {
@@ -222,7 +228,7 @@ class Fs extends resources\BotWebApiResource
         return rmdir($dir); 
     }
     
-    protected function getChild($resource_name)
+    public function getChild($resource_name)
     {
         $resource_name = urldecode($resource_name);
         

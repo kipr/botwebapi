@@ -15,7 +15,7 @@ class Binaries extends resources\BotWebApiResource
         $this->project_resource = $project_resource;
     }
     
-    protected function handleGetRequest()
+    public function get()
     {
         $links = new botwebapi\LinksObject();
         $links->addLink($this->getResourceUri());
@@ -42,7 +42,7 @@ class Binaries extends resources\BotWebApiResource
                                                          'links' => $links));
     }
     
-    protected function handlePostRequest()
+    public function post($content)
     {
         // currently, we (re-)compile all binaries at once
         $output = array();
@@ -50,12 +50,12 @@ class Binaries extends resources\BotWebApiResource
         return new botwebapi\JsonHttpResponse(200, array("output" => $output));
     }
     
-    protected function handlePutRequest()
+    public function put($content)
     {
         return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
     }
     
-    protected function handleDeleteRequest()
+    public function delete($content)
     {
         // its already deleted
         if(!is_dir($this->project_resource->getBinaryLocation()))

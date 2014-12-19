@@ -51,6 +51,26 @@ class HttpResponse
         $this->additional_response_fields = $additional_response_fields;
     }
     
+    public function getStatusCode()
+    {
+        return $this->status_code;
+    }
+    
+    public function getContent()
+    {
+        
+        switch($this->content_type)
+        {
+        case HttpResponse::CONTENT_TYPE_TEXT_PLAIN:
+        case HttpResponse::CONTENT_TYPE_TEXT_HTML:
+            return $this->content;
+        case HttpResponse::CONTENT_TYPE_APPLICATION_JSON:
+            return json_decode($this->content);
+        default:
+            throw new \Exception('Invalid argument: $content_type');
+        }
+    }
+    
     public static function sendHttpResponseAndExit(HttpResponse $response)
     {
         // send header

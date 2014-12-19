@@ -41,33 +41,78 @@ class Project extends resources\BotWebApiResource
         return $this->project_name.'.exe';
     }
     
-    protected function handleGetRequest()
+    public function get()
     {
         $links = new botwebapi\LinksObject();
         $links->addLink($this->getResourceUri());
+        
+        if($this->getParentUri())
+        {
+            $links->addLink(array('path' => $this->getParentUri()),
+                                  array('rel' => 'parent'));
+        }
+        
         $links->addLink(array('path' => WIN_PROJECTS_ROOT_DIR_FS_RESOURCE.'/'.$this->project_name),
-                             array('rel' => 'project_location'));
-        $links->addLink(array('path' => WIN_PROJECTS_ROOT_DIR_FS_RESOURCE.'/'.$this->project_name),
-                             array('rel' => 'files'));
+                              array('rel' => 'project_location'));
+        
+        $language = 'Unknown';
+        
+        $project_files_res = resources\BotWebApiResource::getResource('/'.WIN_PROJECTS_ROOT_DIR_FS_RESOURCE.'/'.$this->project_name);
+        if($project_files_res)
+        {
+            $links->addLink(array('path' => $project_files_res->getResourceUri()),
+                                  array('rel' => 'files'));
+            
+            $resp = $project_files_res->get();
+            if($resp->getStatusCode() == 200)
+            {
+                $content = $resp->getContent();
+                
+                foreach($content->links->files as $files)
+                {
+                    preg_match('`^.*\.c$`', $files->name, $matches);
+                    if($matches[0])
+                    {
+                        $language = 'C';
+                        break;
+                    }
+                    preg_match('`^.*\.(cpp|c\+\+)$`', $files->name, $matches);
+                    if($matches[0])
+                    {
+                        $language = 'C++';
+                        break;
+                    }
+                    preg_match('`^.*\.java$`', $files->name, $matches);
+                    if($matches[0])
+                    {
+                        $language = 'Java';
+                        break;
+                    }
+                }
+            }
+        }
+        
         $links->addLink(array('path' => $this->getResourceUri().'/binary'),
-                             array('rel' => 'binary'));
+                              array('rel' => 'binary'));
         
         return new botwebapi\JsonHttpResponse(200, array('name' => $this->project_name,
                                                          'about' => new botwebapi\AboutObject($this),
+                                                         'type' => 'KISS Web IDE Project',
+                                                         'language' => $language,
                                                          'links' => $links));
     }
     
-    protected function handlePostRequest()
+    public function post($content)
     {
         return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
     }
     
-    protected function handlePutRequest()
+    public function put($content)
     {
         return new botwebapi\JsonHttpResponse(405, $_SERVER['REQUEST_METHOD'].' is not supported');
     }
     
-    protected function handleDeleteRequest()
+    public function delete($content)
     {
         if(unlink($this->archive_location))
         {
