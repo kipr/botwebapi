@@ -187,7 +187,39 @@ class Fs extends resources\BotWebApiResource
     
     protected function handleDeleteRequest()
     {
-        return new botwebapi\JsonHttpResponse(501, 'Not implemented yet');
+        if(is_dir($this->path))
+        {
+            if(Fs::delTree($this->path))
+            {
+                return new botwebapi\HttpResponse(204);
+            }
+            else
+            {
+                return new botwebapi\JsonHttpResponse(500, 'Unable to delete '.$this->path);
+            }
+        }
+        else
+        {
+            if(unlink($this->path))
+            {
+                return new botwebapi\HttpResponse(204);
+            }
+            else
+            {
+                return new botwebapi\JsonHttpResponse(500, 'Unable to delete '.$this->path);
+            }
+        }
+    }
+    
+    // from http://php.net/manual/de/function.rmdir.php
+    private static function delTree($dir)
+    { 
+        $files = array_diff(scandir($dir), array('.','..')); 
+        foreach ($files as $file)
+        { 
+            (is_dir("$dir/$file")) ? delTree("$dir/$file") : unlink("$dir/$file"); 
+        } 
+        return rmdir($dir); 
     }
     
     protected function getChild($resource_name)
