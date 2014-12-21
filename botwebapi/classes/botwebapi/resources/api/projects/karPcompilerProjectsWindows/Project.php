@@ -4,10 +4,6 @@ namespace botwebapi\resources\api\projects\karPcompilerProjectsWindows;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
-// Set constants
-define('WIN_PROJECTS_ROOT_DIR','C:\Users\stefa_000\Documents\Projects\KISS-Projects');
-define('WIN_PROJECTS_ROOT_DIR_FS_RESOURCE','api/fs/Users/stefa_000/Documents/Projects/KISS-Projects');
-
 class Project extends resources\BotWebApiResource
 {
     private $project_name = '';

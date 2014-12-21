@@ -19,7 +19,7 @@ class Fs extends resources\BotWebApiResource
         
         if(NULL == $path)
         {
-            if(PLATFORM == WIN)
+            if(PLATFORM == 'WIN')
             {
                 $this->path = $path = 'C:/';
             }

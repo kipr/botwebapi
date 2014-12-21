@@ -11,8 +11,8 @@ class HttpResponse
     const CHARACTER_SET_UTF_8 = 'UTF-8';
     
     private $status_code = 204;
-    private $content_type = CONTENT_TYPE_TEXT_PLAIN;
-    private $character_set = CHARACTER_SET_UTF_8;
+    private $content_type = HttpResponse::CONTENT_TYPE_TEXT_PLAIN;
+    private $character_set = HttpResponse::CHARACTER_SET_UTF_8;
     private $content = "";
     private $additional_response_fields = array();
     

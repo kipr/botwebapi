@@ -4,9 +4,6 @@ namespace botwebapi\resources\api\projects\karPcompilerProjectsWindows;
 use botwebapi\resources\api\projects as projects;
 use botwebapi as botwebapi;
 
-// Set constants
-define('WIN_PROJECTS_ROOT_DIR','C:\Users\stefa_000\Documents\Projects\KISS-Projects');
-
 class KarPcompilerProjectsWindows implements projects\iProjectProvider
 {
     public function getProjectNames()
