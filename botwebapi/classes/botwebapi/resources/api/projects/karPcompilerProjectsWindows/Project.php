@@ -69,19 +69,19 @@ class Project extends resources\BotWebApiResource
                     foreach($content->links->files as $files)
                     {
                         preg_match('`^.*\.c$`', $files->name, $matches);
-                        if($matches[0])
+                        if(array_key_exists(0, $matches))
                         {
                             $language = 'C';
                             break;
                         }
                         preg_match('`^.*\.(cpp|c\+\+)$`', $files->name, $matches);
-                        if($matches[0])
+                        if(array_key_exists(0, $matches))
                         {
                             $language = 'C++';
                             break;
                         }
                         preg_match('`^.*\.java$`', $files->name, $matches);
-                        if($matches[0])
+                        if(array_key_exists(0, $matches))
                         {
                             $language = 'Java';
                             break;
