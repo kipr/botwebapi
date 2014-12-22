@@ -41,8 +41,7 @@ class Fs extends resources\BotWebApiResource
         
         if($this->getParentUri())
         {
-            $links->addLink(array('parent' => $this->getParentUri()),
-                                  array('rel' => 'parent'));
+            $links->addLink($this->getParentUri(), array('rel' => 'parent'));
         }
         
         $finfo = new \finfo(FILEINFO_MIME_TYPE);
