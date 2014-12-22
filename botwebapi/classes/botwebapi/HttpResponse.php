@@ -13,11 +13,11 @@ class HttpResponse
     private $status_code = 204;
     private $content_type = HttpResponse::CONTENT_TYPE_TEXT_PLAIN;
     private $character_set = HttpResponse::CHARACTER_SET_UTF_8;
-    private $content = "";
+    private $content = '';
     private $additional_response_fields = array();
     
     public function __construct($status_code,
-                                $content,
+                                $content = '',
                                 $additional_response_fields = array(),
                                 $content_type = HttpResponse::CONTENT_TYPE_TEXT_PLAIN,
                                 $character_set = HttpResponse::CHARACTER_SET_UTF_8)
