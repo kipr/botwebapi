@@ -21,17 +21,26 @@ class Fs extends resources\BotWebApiResource
         {
             if(PLATFORM == 'WIN')
             {
-                $this->path = $path = 'C:/';
+                $this->path = 'C:';
             }
             else
             {
-                $this->path = $path = '/';
+                $this->path = '/';
             }
         }
         else
         {
             $this->path = $path;
         }
+    }
+    
+    public function getChildResourceFromFsPath($path)
+    {
+        $path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
+        $resource_path = str_replace(DIRECTORY_SEPARATOR, '/', $this->path.DIRECTORY_SEPARATOR);
+        
+        preg_match('`^'.$resource_path.'(.*)`', $path, $matches);
+        return $this->getChildResource($matches[1]);
     }
     
     public function get()
