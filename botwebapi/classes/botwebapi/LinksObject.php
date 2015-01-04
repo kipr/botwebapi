@@ -4,7 +4,7 @@ namespace botwebapi;
 
 class LinksObject
 {
-    public function addLink($uri = array(), $options = array(), $is_single_link = true)
+    public static function buildUri($uri = array())
     {
         // $uri is an URL as array
         if(is_array($uri))
@@ -14,19 +14,23 @@ class LinksObject
             $host = isset($uri['host']) ? $uri['host'] : $_SERVER['SERVER_NAME'];
             $path = isset($uri['path']) ? ($uri['path'][0] == '/' ? $uri['path'] : '/'.$uri['path']) : '';
             $query = isset($uri['query']) ? '?'.$uri['query'] : '';
-            $href = $scheme.'://'.$user.$host.$path.$query;
+            return $scheme.'://'.$user.$host.$path.$query;
         }
         // $uri is just the path + query
         else if($uri[0] == '/')
         {
-            $href = 'http://'.$_SERVER['SERVER_NAME'].$uri;
+            return 'http://'.$_SERVER['SERVER_NAME'].$uri;
         }
         // $uri is a full URL
         else
         {
-            $href = $uri;
+            return $uri;
         }
-        
+    }
+    
+    public function addLink($uri = array(), $options = array(), $is_single_link = true)
+    {
+        $href = LinksObject::buildUri($uri);
         $link_object = array('href' => $href);
         
         if(array_key_exists('additional', $options) && is_array($options['additional']))
