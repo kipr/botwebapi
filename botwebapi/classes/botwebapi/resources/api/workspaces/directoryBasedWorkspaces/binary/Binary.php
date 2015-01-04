@@ -1,7 +1,7 @@
 <?php
 
-namespace botwebapi\resources\api\projects\karPcompilerProjectsOSX\binary;
-use botwebapi\resources\api\projects\karPcompilerProjectsOSX as karPcompilerProjectsOSX;
+namespace botwebapi\resources\api\workspaces\directoryBasedWorkspaces\binary;
+use botwebapi\resources\api\workspaces\directoryBasedWorkspaces as directoryBasedWorkspaces;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
@@ -9,7 +9,7 @@ class Binary extends resources\BotWebApiResource
 {
     private $project_resource = NULL;
     
-    public function __construct($resource_uri, karPcompilerProjectsOSX\Project $project_resource)
+    public function __construct($resource_uri, directoryBasedWorkspaces\Project $project_resource)
     {
         parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
         $this->project_resource = $project_resource;
@@ -55,13 +55,13 @@ class Binary extends resources\BotWebApiResource
         
         $output = array();
         
-        $command = 'gcc -std=c99 -Wall -I"/Applications/KISS Platform 5.1.2 (10.9)/KISS.app/cs2.app/Contents/prefix/usr/include" -include stdio.h -include kovan/kovan.h -L"/Applications/KISS Platform 5.1.2 (10.9)/KISS.app/cs2.app/Contents/prefix/usr/lib" -lkovan -o '
+        $command = 'c:\\windows\\system32\\cmd.exe /c C:\Users\stefa_000\Documents\Projects\botwebapi\INSTALL\Windows\compile.bat '
             .$this->project_resource->getBinaryOutputDirectory().DIRECTORY_SEPARATOR.$this->project_resource->getBinaryOutputName()
-            .' '.$sourceFile.' 2>&1';
-
+            .' '.$sourceFile;
+        
         exec($command, $output);
-
-        return new botwebapi\JsonHttpResponse(200, array('output' => $output));
+        
+        return new botwebapi\JsonHttpResponse(200, array('output' => array_slice($output, 2)));
     }
     
     public function delete($content)
