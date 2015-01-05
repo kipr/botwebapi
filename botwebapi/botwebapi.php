@@ -66,7 +66,7 @@ if($resource)
 }
 else
 {
-    return new botwebapi\JsonHttpResponse(404, $_SERVER['REQUEST_URI'].' does not name a resource');
+    sendHttpResponseAndExit(404, $_SERVER['REQUEST_URI'].' does not name a resource');
 }
 
 ?>
