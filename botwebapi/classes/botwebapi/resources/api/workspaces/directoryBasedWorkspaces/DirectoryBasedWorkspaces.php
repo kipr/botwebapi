@@ -63,9 +63,9 @@ class DirectoryBasedWorkspaces extends resources\BotWebApiResource
     {
         try
         {
-            $workspace_path = base64_decode($resource_name);
+            $workspace_path = base64_decode(urldecode($resource_name));
             $resource_class_name = __NAMESPACE__.'\\Workspace';
-            return new $resource_class_name($workspace_path, $this->getResourceUri().'/'.urlencode($resource_name));
+            return new $resource_class_name($workspace_path, $this->getResourceUri().'/'.$resource_name);
         }
         catch(\Exception $e)
         {
