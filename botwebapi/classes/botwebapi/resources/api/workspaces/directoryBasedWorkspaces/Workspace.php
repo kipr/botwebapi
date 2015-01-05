@@ -44,6 +44,7 @@ class Workspace extends resources\BotWebApiResource
         }
         
         return new botwebapi\JsonHttpResponse(200, array('about' => new botwebapi\AboutObject($this),
+                                                         'path' => str_replace(':/', ':', $this->path),
                                                          'name' => basename($this->path),
                                                          'links' => $links));
     }
