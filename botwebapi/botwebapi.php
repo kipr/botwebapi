@@ -9,8 +9,9 @@ define('CLASS_PATH', API_ROOT_PATH.DIRECTORY_SEPARATOR.'classes');
 if(defined('PHP_WINDOWS_VERSION_MAJOR'))
 {
     define('PLATFORM', 'WIN');
-    define('WIN_PROJECTS_ROOT_DIR','C:\Users\stefa_000\Documents\Projects\KISS-Projects');
-    define('WIN_PROJECTS_ROOT_DIR_FS_RESOURCE','api/fs/Users/stefa_000/Documents/Projects/KISS-Projects');
+    
+    define('CMD_PATH', 'c:\\windows\\system32\\cmd.exe');
+    define('COMPILE_HELPER_PATH', 'C:\Users\stefa_000\Documents\Projects\botwebapi\INSTALL\Windows\compile.bat');
 }
 else
 {

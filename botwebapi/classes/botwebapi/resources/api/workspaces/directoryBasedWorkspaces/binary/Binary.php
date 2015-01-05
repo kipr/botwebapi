@@ -55,9 +55,12 @@ class Binary extends resources\BotWebApiResource
         
         $output = array();
         
-        $command = 'c:\\windows\\system32\\cmd.exe /c C:\Users\stefa_000\Documents\Projects\botwebapi\INSTALL\Windows\compile.bat '
-            .$this->project_resource->getBinaryOutputDirectory().DIRECTORY_SEPARATOR.$this->project_resource->getBinaryOutputName()
-            .' '.$sourceFile;
+        if(PLATFORM == 'WIN')
+        {
+            $command = CMD_PATH.' /c '.COMPILE_HELPER_PATH.' '
+                .$this->project_resource->getBinaryOutputDirectory().DIRECTORY_SEPARATOR.$this->project_resource->getBinaryOutputName()
+                .' '.$sourceFile;
+        }
         
         exec($command, $output);
         
