@@ -34,3 +34,46 @@ C:\WINDOWS\system32>del C:\LightTPD\conf\lighttpd.conf
 C:\WINDOWS\system32>mklink C:\LightTPD\conf\lighttpd.conf C:\Users\stefan\Documents\Projects\botwebapi\INSTALL\Windows\lighttpd\lighttpd.conf
 C:\WINDOWS\system32>mklink /D C:\LightTPD\htdocs\api C:\Users\stefan\Documents\Projects\botwebapi\botwebapi
 ```
+
+### Edit the fixed paths
+This manual installation assumes that your
+
+1. Bot Web API source (`<botwebapi>`) is located at `C:\Users\stefa_000\Documents\Projects\botwebapi`
+2. Windows system 32 directory is located at `C:\windows\system32`
+3. KISS Platform 5 is located at `C:\Program Files (x86)\KISS Platform 5.1.2\KISS`
+
+Please adjust the following files if this is not the case:
+
+1. Open `<botwebapi>\botwebapi\botwebapi.php` and verify:
+  1. `CMD_PATH` has to point to your cmd.exe (usually `C:\windows\system32\cmd.exe`)
+  2. `COMPILE_HELPER_PATH` has to point to your compile.bat (located at `<botwebapi>\INSTALL\Windows\compile.bat`)
+2. Open `<botwebapi>\INSTALL\Windows\compile.bat` and verify that the path to your KISS Platform 5 is correct (usually `C:\Program Files (x86)\KISS Platform 5.1.2\KISS`)
+
+## 2 Launch the LightTPD server
+If not already launched, navigate to `C:\LightTPD` and launch (double click) on `LightTPD.exe`
+
+## 3 Check if the Bot Web API is ready
+Open http://127.0.0.1/api in a browser. Your browser should display a JSON response like the following one:
+```
+{
+   "about": {
+        "resource_class": "botwebapi\\resources\\api\\Api",
+        "resource_version": "1.0",
+        "resource_homepage": "https://github.com/kipr/botwebapi"
+    },
+    "links": {
+        "self": {
+            "href": "http://127.0.0.1/api",
+            "type": "application/vnd.KIPR.BotWebApi; charset=utf-8"
+        },
+        "fs": {
+            "href": "http://127.0.0.1/api/fs",
+            "type": "application/vnd.KIPR.BotWebApi; charset=utf-8"
+        },
+        "workspaces": {
+            "href": "http://127.0.0.1/api/workspaces",
+            "type": "application/vnd.KIPR.BotWebApi; charset=utf-8"
+        }
+    }
+}
+```
