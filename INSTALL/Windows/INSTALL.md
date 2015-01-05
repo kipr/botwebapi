@@ -6,7 +6,7 @@ This guide describes how to install the Bot Web API Server on Microsoft Windows.
 
 ## 1 Manual Installation
 
-### 1.2 Install missing applications
+### 1.1 Install missing applications
 
 #### Install PHP
 1. Download the latest version from [here](http://windows.php.net/download/).
