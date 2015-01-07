@@ -10,7 +10,7 @@ if(defined('PHP_WINDOWS_VERSION_MAJOR'))
 {
     define('PLATFORM', 'WIN');
     
-    define('CMD_PATH', 'c:\\windows\\system32\\cmd.exe');
+    define('CMD_PATH', 'C:\windows\system32\cmd.exe');
     define('COMPILE_HELPER_PATH', 'C:\Users\stefa_000\Documents\Projects\botwebapi\INSTALL\Windows\compile.bat');
 }
 else
