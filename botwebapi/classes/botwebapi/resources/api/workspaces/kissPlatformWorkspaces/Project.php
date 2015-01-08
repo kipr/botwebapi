@@ -1,6 +1,6 @@
 <?php
 
-namespace botwebapi\resources\api\projects\karPcompilerProjects;
+namespace botwebapi\resources\api\workspaces\kissPlatformWorkspace;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
