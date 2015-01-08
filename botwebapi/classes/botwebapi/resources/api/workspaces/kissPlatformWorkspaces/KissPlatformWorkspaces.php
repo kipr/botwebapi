@@ -8,9 +8,9 @@ use botwebapi as botwebapi;
 class KissPlatformWorkspaces extends resources\BotWebApiResource
 {
 
-    public function __construct($resource_uri)
+    public function __construct($resource_uri, $parent_resource)
     {
-        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi', $parent_resource);
     }
     
     public function get()
@@ -54,7 +54,7 @@ class KissPlatformWorkspaces extends resources\BotWebApiResource
         try
         {
             $resource_class_name = __NAMESPACE__.'\\Workspace';
-            return new $resource_class_name($this->getResourceUri().'/workspace');
+            return new $resource_class_name($this->getResourceUri().'/workspace', $this);
         }
         catch(\Exception $e)
         {

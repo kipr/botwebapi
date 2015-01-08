@@ -12,9 +12,9 @@ define('BINARIES_ROOT_DIR', '/kovan/bin');
 class Workspace extends resources\BotWebApiResource
 {
 
-    public function __construct($resource_uri)
+    public function __construct($resource_uri, $parent_resource)
     {
-        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi', $parent_resource);
     }
     
     public function get()
@@ -65,7 +65,7 @@ class Workspace extends resources\BotWebApiResource
         try
         {
             $resource_class_name = __NAMESPACE__.'\\Project';
-            return new $resource_class_name($resource_name, $this->getResourceUri().'/'.$resource_name);
+            return new $resource_class_name($resource_name, $this->getResourceUri().'/'.$resource_name, $this);
         }
         catch(\Exception $e)
         {

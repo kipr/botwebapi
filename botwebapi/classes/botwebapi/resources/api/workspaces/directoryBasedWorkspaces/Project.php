@@ -9,7 +9,7 @@ class Project extends resources\BotWebApiResource
     private $project_name = '';
     private $project_path = '';
     
-    public function __construct($project_name, $project_path, $resource_uri)
+    public function __construct($project_name, $project_path, $resource_uri, $parent_resource)
     {
         if(!is_readable($project_path))
         {
@@ -19,7 +19,7 @@ class Project extends resources\BotWebApiResource
         $this->project_name = $project_name;
         $this->project_path = $project_path;
         
-        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi', $parent_resource);
     }
     
     public function getProjectName()

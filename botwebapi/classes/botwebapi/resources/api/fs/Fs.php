@@ -13,9 +13,9 @@ class Fs extends resources\BotWebApiResource
 {
     private $path = NULL;
     
-    public function __construct($resource_uri, $path = NULL)
+    public function __construct($resource_uri, $parent_resource, $path = NULL)
     {
-        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi', $parent_resource);
         
         if(NULL == $path)
         {
@@ -203,7 +203,7 @@ class Fs extends resources\BotWebApiResource
             return new botwebapi\JsonHttpResponse(500, 'Unable to write content');
         }
         
-        return new botwebapi\HttpResponse(204);
+	    return new botwebapi\HttpResponse(204);
     }
     
     public function delete($content)
@@ -253,7 +253,28 @@ class Fs extends resources\BotWebApiResource
             
             if($file_name == $resource_name)
             {
-                $fs = new Fs($this->getResourceUri().'/'.$resource_name, $file);
+                // check if we have a file type handler for this file
+                foreach (glob(__DIR__.DIRECTORY_SEPARATOR.'fileTypeHandlers'.DIRECTORY_SEPARATOR.'*') as $handler)
+                {
+                    // the handler-resources are always located in a directory
+                    if(is_dir($handler) && !is_link($handler))
+                    {
+                        $handler_name = basename($handler);
+                        $handler_class_name = __NAMESPACE__.'\\fileTypeHandlers\\'.$handler_name.'\\'.ucfirst($handler_name);
+                        
+                        try
+                        {
+                            if($handler_class_name::canHandle($file))
+                            {
+                                return new $handler_class_name($this->getResourceUri().'/'.$resource_name, $parent_resource, $file);
+                            }
+                        }
+                        catch(\Exception $e) { }
+                    }
+                }
+                
+                // if not, create a new generic file object
+                $fs = new Fs($this->getResourceUri().'/'.$resource_name, $this, $file);
                 return $fs;
             }
         }

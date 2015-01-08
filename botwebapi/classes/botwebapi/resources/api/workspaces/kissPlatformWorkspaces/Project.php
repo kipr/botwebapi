@@ -1,6 +1,7 @@
 <?php
 
 namespace botwebapi\resources\api\workspaces\kissPlatformWorkspaces;
+use botwebapi\resources\api\fs as fs;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
@@ -15,7 +16,7 @@ class Project extends resources\BotWebApiResource
     private $binary_location = '';
     private $temp_dir = NULL;
     
-    public function __construct($project_name, $resource_uri)
+    public function __construct($project_name, $resource_uri, $parent_resource)
     {
         if(!is_readable(ARCHIVES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name))
         {
@@ -26,34 +27,19 @@ class Project extends resources\BotWebApiResource
         $this->archive_location = ARCHIVES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name;
         $this->binary_location = BINARIES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name;
         
-        // unpack the files in a temporary directory
-        $tmp_dir = sys_get_temp_dir().'/kiss_'.uniqid();
-        while(file_exists($tmp_dir))
-        {
-	        $tmp_dir = sys_get_temp_dir().'/kiss_'.uniqid();
-        }
-        
-        if(mkdir($tmp_dir))
-        {
-            $this->temp_dir = $tmp_dir;
-	        $tmp_kar_file = $this->temp_dir.'/'.$this->project_name;
-	        
-	        if(copy($this->archive_location, $tmp_kar_file.'.kiss'))
-	        {
-		        exec('kissarchive -e '.$tmp_kar_file.' '.$this->temp_dir.'/');
-	        }
-        }
-        
-        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi', $parent_resource);
     }
     
     public function __destruct()
     {
-        echo 'destruct';
-        if($this->temp_dir != NULL)
+        // Improve me
+        if(file_exists($this->binary_location.DIRECTORY_SEPARATOR.$this->project_name))
         {
-            // fix me
-            //rrmdir($this->temp_dir);
+            unlink($this->binary_location.DIRECTORY_SEPARATOR.$this->project_name);
+        }
+        if(file_exists($this->binary_location))
+        {
+            rmdir($this->binary_location);
         }
     }
     
@@ -95,15 +81,11 @@ class Project extends resources\BotWebApiResource
                     $links->addLink(array('path' => $archive_fs_resource->getResourceUri()),
                                           array('rel' => 'project_location'));
                 }
-                
-                $tmp_fs_resource = $fs_root_resource->getChildResourceFromFsPath($this->temp_dir);
-                if($tmp_fs_resource)
-                {
-                    $links->addLink(array('path' => $tmp_fs_resource->getResourceUri()),
-                                          array('rel' => 'files'));
-                }
            }
        }
+       
+        $links->addLink(array('path' => $this->getResourceUri().'/archive/'.$this->project_name),
+                        array('rel' => 'files'));
         
         foreach (glob(__DIR__.'/*') as $file)
         {
@@ -149,6 +131,11 @@ class Project extends resources\BotWebApiResource
     {
         try
         {
+            if($resource_name == 'archive')
+            {
+                return new fs\Fs($this->getResourceUri().'/'.$resource_name, $this, ARCHIVES_ROOT_DIR);
+            }
+            
             // Load the resource. The class name is <this namespace>\<name>\<Name>
             $resource_class_name = __NAMESPACE__.'\\'.$resource_name.'\\'.ucfirst($resource_name);
             return new $resource_class_name($this->getResourceUri().'/'.$resource_name, $this);

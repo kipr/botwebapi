@@ -16,9 +16,9 @@ use botwebapi as botwebapi;
  */
 class Workspaces extends resources\BotWebApiResource
 {
-    public function __construct($resource_uri)
+    public function __construct($resource_uri, $parent_resource)
     {
-        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi', $parent_resource);
     }
     
     public function get()
@@ -73,7 +73,7 @@ class Workspaces extends resources\BotWebApiResource
             $workspace_provider_name = urldecode($resource_name);
             $workspace_provider_class_name
                 = __NAMESPACE__.'\\'.$workspace_provider_name.'\\'.ucfirst($workspace_provider_name);
-            return new $workspace_provider_class_name($this->getResourceUri().'/'.$resource_name);
+            return new $workspace_provider_class_name($this->getResourceUri().'/'.$resource_name, $this);
         }
         catch(\Exception $e)
         {

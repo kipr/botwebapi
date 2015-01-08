@@ -11,7 +11,7 @@ class Binary extends resources\BotWebApiResource
     
     public function __construct($resource_uri, directoryBasedWorkspaces\Project $project_resource)
     {
-        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi', $project_resource);
         $this->project_resource = $project_resource;
     }
     

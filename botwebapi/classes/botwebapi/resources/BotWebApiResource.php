@@ -22,9 +22,9 @@ abstract class BotWebApiResource
     private $resource_version = '';
     private $resource_homepage = '';
     private $resource_name = '';
-    private $parent_uri = '';
+    private $parent_resource = NULL;
     
-    public function __construct($resource_uri, $resource_version, $resource_homepage)
+    public function __construct($resource_uri, $resource_version, $resource_homepage, $parent_resource)
     {
         $this->resource_uri = $resource_uri;
         $this->resource_version = $resource_version;
@@ -40,8 +40,7 @@ abstract class BotWebApiResource
         {
             $this->resource_name = substr($this->resource_uri, $name_start, $name_end - $name_start);
         }
-        $parent_uri = substr($this->resource_uri, 0, $name_start-1);
-        $this->parent_uri = $parent_uri ? $parent_uri : '';
+        $this->parent_resource = $parent_resource;
     }
     
     public function getName()
@@ -51,7 +50,14 @@ abstract class BotWebApiResource
     
     public function getParentUri()
     {
-        return $this->parent_uri;
+        if($this->parent_resource)
+        {
+            return $this->parent_resource->getResourceUri();
+        }
+        else
+        {
+            return NULL;
+        }
     }
     
     public function getResourceUri()

@@ -11,7 +11,7 @@ class Binaries extends resources\BotWebApiResource
     
     public function __construct($resource_uri, kissPlatformWorkspaces\Project $project_resource)
     {
-        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi', , $project_resource);
         $this->project_resource = $project_resource;
     }
     
@@ -79,7 +79,7 @@ class Binaries extends resources\BotWebApiResource
         {
             // Load the resource. The class name is <this namespace>\<name>\<Name>
             $resource_class_name = __NAMESPACE__.'\\Binary';
-            return new $resource_class_name($this->getResourceUri().'/'.$resource_name, $this->project_resource);
+            return new $resource_class_name($this->getResourceUri().'/'.$resource_name, $this->project_resource, $this);
         }
         catch(\Exception $e)
         {

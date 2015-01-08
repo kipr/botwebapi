@@ -8,7 +8,7 @@ class Workspace extends resources\BotWebApiResource
 {
     private $path = '';
     
-    public function __construct($workspace_path, $resource_uri)
+    public function __construct($workspace_path, $resource_uri, $parent_resource)
     {
         if(!is_readable($workspace_path))
         {
@@ -18,7 +18,7 @@ class Workspace extends resources\BotWebApiResource
         
         $this->path = $workspace_path;
         
-        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+        parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi', $parent_resource);
     }
     
     public function get()
@@ -70,7 +70,7 @@ class Workspace extends resources\BotWebApiResource
         {
             $resource_class_name = __NAMESPACE__.'\\Project';
             $project_path = $this->path.DIRECTORY_SEPARATOR.$resource_name;
-            return new $resource_class_name($resource_name, $project_path, $this->getResourceUri().'/'.urlencode($resource_name));
+            return new $resource_class_name($resource_name, $project_path, $this->getResourceUri().'/'.urlencode($resource_name), $this);
         }
         catch(\Exception $e)
         {
