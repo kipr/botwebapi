@@ -47,8 +47,27 @@ class Project extends resources\BotWebApiResource
     {
         $links = new botwebapi\LinksObject();
         $links->addLink($this->getResourceUri());
-        $links->addLink(array('scheme' => 'sftp', 'path' => $this->archive_location),
-                        array('rel' => 'project_location', 'additional' => array('type' => 'application/vnd.KIPR.kar; charset=binary')));
+        
+        if($this->getParentUri())
+        {
+            $links->addLink(array('path' => $this->getParentUri()),
+                                  array('rel' => 'parent'));
+        }
+        
+        $root_resource = resources\BotWebApiResource::getRootResource();
+        if($root_resource)
+        {
+            $fs_root_resource = $root_resource->getChildResource('/fs');
+            if($fs_root_resource)
+            {
+                $archive_fs_resource = $fs_root_resource->getChildResourceFromFsPath(ARCHIVES_ROOT_DIR.DIRECTORY_SEPARATOR.$this->project_name);
+                if($archive_fs_resource)
+                {
+                    $links->addLink(array('path' => $archive_fs_resource->getResourceUri()),
+                                          array('rel' => 'project_location'));
+                }
+           }
+       }
         
         foreach (glob(__DIR__.'/*') as $file)
         {
@@ -63,6 +82,8 @@ class Project extends resources\BotWebApiResource
         
         return new botwebapi\JsonHttpResponse(200, array('name' => $this->project_name,
                                                          'about' => new botwebapi\AboutObject($this),
+                                                         'type' => 'KISS Platform workspace project',
+                                                         'language' => 'C', //fixed for the moment
                                                          'links' => $links));
     }
     
