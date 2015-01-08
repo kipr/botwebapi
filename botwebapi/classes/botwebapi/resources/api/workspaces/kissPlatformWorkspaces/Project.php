@@ -1,6 +1,6 @@
 <?php
 
-namespace botwebapi\resources\api\workspaces\kissPlatformWorkspace;
+namespace botwebapi\resources\api\workspaces\kissPlatformWorkspaces;
 use botwebapi\resources as resources;
 use botwebapi as botwebapi;
 
@@ -43,7 +43,7 @@ class Project extends resources\BotWebApiResource
         return $this->archive_location;
     }
     
-    protected function get()
+    public function get()
     {
         $links = new botwebapi\LinksObject();
         $links->addLink($this->getResourceUri());
