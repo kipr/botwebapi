@@ -83,6 +83,7 @@ class Fs extends resources\BotWebApiResource
                                                              'type' => filetype($this->path),
                                                              'mime_type' => $finfo->file($this->path),
                                                          //  'last_modified' => date ("F d Y H:i:s.", filemtime($this->path)),
+                                                             'directory_separator' => DIRECTORY_SEPARATOR,
                                                              'links' => $links));
         }
         else
