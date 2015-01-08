@@ -37,7 +37,13 @@ class Fs extends resources\BotWebApiResource
     public function getChildResourceFromFsPath($path)
     {
         $path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
-        $resource_path = str_replace(DIRECTORY_SEPARATOR, '/', $this->path.DIRECTORY_SEPARATOR);
+        
+        $resource_path = $this->path;
+        if($resource_path != DIRECTORY_SEPARATOR)
+        {
+            $resource_path = $resource_path.DIRECTORY_SEPARATOR;
+        }
+        $resource_path = str_replace(DIRECTORY_SEPARATOR, '/', $resource_path);
         
         preg_match('`^'.$resource_path.'(.*)`', $path, $matches);
         return $this->getChildResource($matches[1]);

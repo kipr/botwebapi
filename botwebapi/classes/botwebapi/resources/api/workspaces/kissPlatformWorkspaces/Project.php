@@ -13,6 +13,7 @@ class Project extends resources\BotWebApiResource
     private $project_name = '';
     private $archive_location = '';
     private $binary_location = '';
+    private $temp_dir = NULL;
     
     public function __construct($project_name, $resource_uri)
     {
@@ -25,7 +26,35 @@ class Project extends resources\BotWebApiResource
         $this->archive_location = ARCHIVES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name;
         $this->binary_location = BINARIES_ROOT_DIR.DIRECTORY_SEPARATOR.$project_name;
         
+        // unpack the files in a temporary directory
+        $tmp_dir = sys_get_temp_dir().'/kiss_'.uniqid();
+        while(file_exists($tmp_dir))
+        {
+	        $tmp_dir = sys_get_temp_dir().'/kiss_'.uniqid();
+        }
+        
+        if(mkdir($tmp_dir))
+        {
+            $this->temp_dir = $tmp_dir;
+	        $tmp_kar_file = $this->temp_dir.'/'.$this->project_name;
+	        
+	        if(copy($this->archive_location, $tmp_kar_file.'.kiss'))
+	        {
+		        exec('kissarchive -e '.$tmp_kar_file.' '.$this->temp_dir.'/');
+	        }
+        }
+        
         parent::__construct($resource_uri, '1.0', 'https://github.com/kipr/botwebapi');
+    }
+    
+    public function __destruct()
+    {
+        echo 'destruct';
+        if($this->temp_dir != NULL)
+        {
+            // fix me
+            //rrmdir($this->temp_dir);
+        }
     }
     
     public function getProjectName()
@@ -65,6 +94,13 @@ class Project extends resources\BotWebApiResource
                 {
                     $links->addLink(array('path' => $archive_fs_resource->getResourceUri()),
                                           array('rel' => 'project_location'));
+                }
+                
+                $tmp_fs_resource = $fs_root_resource->getChildResourceFromFsPath($this->temp_dir);
+                if($tmp_fs_resource)
+                {
+                    $links->addLink(array('path' => $tmp_fs_resource->getResourceUri()),
+                                          array('rel' => 'files'));
                 }
            }
        }
