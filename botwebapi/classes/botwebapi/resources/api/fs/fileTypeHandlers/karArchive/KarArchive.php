@@ -212,7 +212,9 @@ class KarArchive extends resources\BotWebApiResource
                 return new botwebapi\JsonHttpResponse(500, 'Unable to write content');
             }
             
-            return new botwebapi\HttpResponse(201, '', array('Location' => $this->getResourceUri().'/'.urlencode($json_data["name"])));
+            
+            $location = botwebapi\LinksObject::buildUri($this->getResourceUri().'/'.urlencode($json_data["name"]));
+            return new botwebapi\HttpResponse(201, '', array('Location' => $location));
         }
     }
     
