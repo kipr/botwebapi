@@ -223,6 +223,13 @@ class KarArchive extends resources\BotWebApiResource
     
     public function delete($content)
     {
+        if($this->temp_dir != NULL)
+        {
+            // delete the temp file
+            KarArchive::delTree($this->temp_dir);
+            $this->temp_dir = NULL;
+        }
+        
         if(unlink($this->path))
         {
             return new botwebapi\HttpResponse(204);
