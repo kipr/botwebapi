@@ -19,12 +19,16 @@ else
 }
 define('ROOT_RESOURCE_URI_PATH', '/api');
 
+// allow requests from any origin
+if(isset($_SERVER['HTTP_ORIGIN']))
+{
+    header("Access-Control-Allow-Origin: {$_SERVER['HTTP_ORIGIN']}");
+    header('Access-Control-Allow-Credentials: true');
+}
+
 // respond to preflights
 if($_SERVER['REQUEST_METHOD'] == 'OPTIONS')
 {
-    // return only the headers and not the content
-    // only allow CORS if we're doing a GET - i.e. no saving for now.
-    header('Access-Control-Allow-Origin: *');
     header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
     header('Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS');
     exit;

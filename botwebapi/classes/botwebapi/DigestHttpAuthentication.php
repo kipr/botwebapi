@@ -8,6 +8,26 @@ class DigestHttpAuthentication
 {
     public static function authenticate()
     {
+        if(PLATFORM == 'LINK')
+        {
+            // fix me!
+            return;
+            
+            // check if device.conf exists
+            $device_conf_path = '/etc/kovan/device.conf';
+            if(is_readable($device_conf_path))
+            {
+                $content = file_get_contents($device_conf_path);
+                preg_match('`kovan_serial/password: (.*)\n`', $content, $matches);
+                $password = $matches[1];
+            }
+        }
+        
+        if(!$password)
+        {
+            $password = 'KISS';
+        }
+        
         // if not already done, ask the client to authentificate
         if(empty($_SERVER['PHP_AUTH_DIGEST']))
         {
@@ -17,19 +37,6 @@ class DigestHttpAuthentication
                                                                          '",qop="auth",nonce="'.uniqid().
                                                                          '",opaque="'.md5(BOT_WEB_API_REALM).'"'));
             HttpResponse::sendHttpResponseAndExit($response);
-        }
-        
-        // check if device.conf exists
-        $device_conf_path = '/etc/kovan/device.conf';
-        if(is_readable($device_conf_path))
-        {
-            $content = file_get_contents($device_conf_path);
-            preg_match('`kovan_serial/password: (.*)\n`', $content, $matches);
-            $password = $matches[1];
-        }
-        else
-        {
-            $password = 'KISS';
         }
         
         if (!($data = http_digest_parse($_SERVER['PHP_AUTH_DIGEST'])))
