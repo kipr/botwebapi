@@ -36,7 +36,7 @@ class Binary extends resources\BotWebApiResource
     {
         // currently, we (re-)compile all binaries at once
         $output = array();
-        exec('programcompiler '.$this->project_resource->getProjectName(), $output);
+        exec('pco '.$this->project_resource->getProjectName(), $output);
         return new botwebapi\JsonHttpResponse(200, array("output" => $output));
     }
     
